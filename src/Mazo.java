@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class Mazo {
-    ArrayList<Carta> cartas = new ArrayList<>();
+    private ArrayList<Carta> cartas = new ArrayList<>();
     
     public Mazo()
     {
@@ -20,16 +20,6 @@ public class Mazo {
             }
         }
         
-
-        int index = 0;
-        for(int i = 0; i < 13; i++)
-        {
-            for(int j = 0; j < 4; j++)
-            {
-                cartas.get(index).setBounds((i*59),(j*89),59,89);
-                index++;
-            }
-        }
     }
 
 
@@ -38,12 +28,12 @@ public class Mazo {
         Collections.shuffle(cartas);
     }
 
-    public Carta getCard()
+    public Carta darCarta()
     {
         return cartas.remove(0);
     }
 
-    public ArrayList<Carta> getNCartas(int n)
+    public ArrayList<Carta> darNCartas(int n)
     {
         ArrayList<Carta> cartasRetorno = new ArrayList<>();
         for(int i = 0; i<n ; i++)
@@ -57,6 +47,25 @@ public class Mazo {
     public Carta getCartaI(int i)
     {
         return cartas.get(i);
+    }
+
+    public ArrayList<Carta> allCards()
+    {
+        return cartas;
+    }
+
+    public void reubicarCartas()
+    {
+        int index = 0;
+        for(int i = 0; i < 13; i++)
+        {
+            for(int j = 0; j < 4; j++)
+            {
+                cartas.get(index).setBounds((i*59),(j*89),59,89);
+                index++;
+            }
+        }
+
     }
 
 }

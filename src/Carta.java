@@ -6,12 +6,12 @@ import java.awt.event.*;
 
 public class Carta extends JButton {
 
-    int categoria;
-    String palo;
-    ImageIcon imagen;
-    ImageIcon reverso = new ImageIcon("imagenes\\fila-1-columna-1.png");
-    String ubicacion;
-    boolean visible = false;
+    private int categoria;
+    private String palo;
+    private ImageIcon imagen;
+    private ImageIcon reverso = new ImageIcon("imagenes\\fila-1-columna-1.png");
+    private String ubicacion;
+    private boolean visible = false;
 
     public Carta(int categoria, String palo)
     {
@@ -87,6 +87,16 @@ public class Carta extends JButton {
             this.setIcon(reverso);
         }
 
+    }
+
+    public String toString()
+    {
+        if(visible)
+        {
+            return ("["+categoria+"|"+palo+"]");
+        } else {
+            return ("[####]");
+        }
     }
 
 }
