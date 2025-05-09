@@ -1,11 +1,14 @@
 import java.util.ArrayList;
 
+
 public abstract class PokerPadre {
+    public final int CARDLENGHT = 59*2;
+    public final int CARDHEIGHT = 89*2;
     
-    ArrayList<Jugador> jugadores = new ArrayList<>();
-    int apuesta;
-    int numJugadores;
-    Mazo mazo = new Mazo();
+    protected ArrayList<Jugador> jugadores = new ArrayList<>();
+    protected int apuesta;
+    protected int numJugadores;
+    protected Mazo mazo = new Mazo();
 
     public PokerPadre(int apuestaInicial, int numJugadores,int dineroInicial)
     {
@@ -26,6 +29,8 @@ public abstract class PokerPadre {
     public abstract void showdown();
     
     public abstract Jugador mejorJugada();
+
+    
 
 
 

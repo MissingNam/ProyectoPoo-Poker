@@ -1,6 +1,8 @@
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+
+import java.awt.Image;
 import java.awt.event.*;
 
 
@@ -47,6 +49,10 @@ public class Carta extends JButton {
                
         ubicacion = ("imagenes\\fila-"+fila+"-columna-"+columna+".png");
         imagen = new ImageIcon(ubicacion);
+        Image resizedimagen = imagen.getImage().getScaledInstance(59*2, 89*2, Image.SCALE_SMOOTH);
+        imagen = new ImageIcon(resizedimagen);
+        resizedimagen = reverso.getImage().getScaledInstance(59*2,89*2,Image.SCALE_SMOOTH);
+        reverso = new ImageIcon(resizedimagen);
 
         this.setIcon(reverso);
         this.setSize(59,89);
@@ -56,6 +62,7 @@ public class Carta extends JButton {
 
     }
     
+    /*  Esto fue para hacer pruebas, no lo consideres ya que interferiria con 7-stud
     @Override
         protected void processMouseEvent(MouseEvent e)
         {
@@ -65,6 +72,7 @@ public class Carta extends JButton {
             }
             super.processMouseEvent(e);
         }
+            */
 
 
     public String getPalo()
