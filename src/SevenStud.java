@@ -8,17 +8,23 @@ import javax.swing.*;
 
 public class SevenStud extends PokerPadre
 {
-    private int jugadorActual = 0;
+    
 
     // cosas para lo grafico
-    JFrame frame = new JFrame();
-    JPanel panelInfo = new JPanel();
-    JPanel panelJuego = new JPanel();
-    JLabel rondaActual = new JLabel("Third-Street");
-    JLabel dineroJugadorActual = new JLabel();
-    JLabel dineroAcumulado = new JLabel();
-    JLabel apuestaActual = new JLabel();
-    int dineroBanca = 0;
+    private JFrame frame = new JFrame();
+    private JPanel panelInfo = new JPanel();
+    private JPanel panelJuego = new JPanel();
+    private JLabel rondaActual = new JLabel("Third-Street");
+    private JLabel dineroJugadorActual = new JLabel();
+    private JLabel dineroAcumulado = new JLabel();
+    private JLabel apuestaActual = new JLabel();
+
+    // cosas donde se guarda informacion importante
+    private int dineroBanca = 0;
+    private int jugadorActual = 0;
+
+    //banderas, 
+    private int primeraVez = 0;
 
     public SevenStud(int apuestaInicial, int numJugadores,int dineroInicial)
     {
@@ -45,6 +51,8 @@ public class SevenStud extends PokerPadre
         thirdStreet();
     }
 
+
+    // aqui se realizan las apuestas, se repasa a todos los jugadores y se les pregunta que quieren hacer
     public void rondaApuestas()
     {
         int fin = 0;
@@ -70,8 +78,9 @@ public class SevenStud extends PokerPadre
             actualizarLabels();
             // poner las cosas
         
-            if(rondaActual.getText().equals("Third Street") && jugadorActual == 0)
+            if(rondaActual.getText().equals("Third Street") && jugadorActual == 0 && primeraVez == 0)
             {
+                primeraVez = 1;
                 //boton bring-in
                 bringIn.addActionListener( a -> {
                     apuesta = jugadores.get(jugadorActual).getCartaI(2).getCategoria();
@@ -158,6 +167,12 @@ public class SevenStud extends PokerPadre
         } else if(fin >= jugadores.size())
         {
             JOptionPane.showMessageDialog(null, "Se acabaron las apuestas", "Poker", JOptionPane.INFORMATION_MESSAGE);
+            jugadores.stream().forEach(a -> a.cambioAlcanzoApuesta());
+            // si es third street, lo mandamos a fourthStreet una vez se acaban las apuestas
+            if(rondaActual.getText().equals("Third Street"))
+            {
+                fourthStreet();
+            }
 
         } else if(jugadores.get(jugadorActual).seRindio()) 
         {
@@ -173,16 +188,33 @@ public class SevenStud extends PokerPadre
             rondaApuestas();
         }
 
-
-
-
-        
-
     }
 
-    public void rondaRepartir()
+    public void rondaRepartir(int numero,boolean visible)
     {
-
+        // recorre todos los jugadores y les da una carta
+        Iterator<Jugador> iterador = jugadores.iterator();
+        while(iterador.hasNext())
+        {
+            Jugador aDar = iterador.next();
+            // evitar darle cartas a los rendidos (temas de optimizacion)
+            if(visible)
+            {
+                for(int i = 0; i<numero; i++)
+                {
+                    Carta añadirCa = mazo.darCarta();
+                    añadirCa.voltear();
+                    aDar.añadirCarta(añadirCa);
+                }
+            } else {
+                for(int i = 0; i<numero; i++)
+                {
+                    Carta añadirCa = mazo.darCarta();
+                    aDar.añadirCarta(añadirCa);
+                } 
+            }
+            
+        }
     }
 
     public void showdown()
@@ -238,14 +270,23 @@ public class SevenStud extends PokerPadre
         frame.setVisible(true);
     }
 
-
+    // calles, estas casi no hacen nada, solo llaman a ronda repartir y a ronda apuestas, segun lo necesario
     public void thirdStreet()
     {
         rondaActual.setText("Third Street");
         ponerAlPeorAlInicio();
         rondaApuestas();
-
     }
+
+    public void fourthStreet()
+    {
+        rondaActual.setText("Fourth Street");
+        rondaRepartir(1,true);
+        // aqui añadir el organizar a los jugadores
+        rondaApuestas();
+    }
+
+
 
     public void actualizarPanelJuego()
     {
