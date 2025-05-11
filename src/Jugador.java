@@ -1,10 +1,11 @@
 import java.util.ArrayList;
 
 public class Jugador {
-    ArrayList<Carta> mano = new ArrayList<>();
-    int dinero;
-    boolean rendido;
-    boolean alcanzoApuesta;
+    private ArrayList<Carta> mano = new ArrayList<>();
+    private int dinero;
+    private boolean rendido;
+    private boolean alcanzoApuesta;
+    private int puntaje;
 
     public Jugador(int dineroInicial)
     {
@@ -37,7 +38,7 @@ public class Jugador {
         rendido = !rendido;
     }
 
-    public void CambioAlcanzoApuesta()
+    public void cambioAlcanzoApuesta()
     {
         alcanzoApuesta = !alcanzoApuesta;
     }
@@ -62,6 +63,25 @@ public class Jugador {
         return mano.size();
     }
 
+    public String getDineroString()
+    {
+        return Integer.toString(dinero);
+    }
+
+    public boolean seRindio()
+    {
+        return rendido;
+    }
+
+    public boolean igualoApuesta()
+    {
+        return alcanzoApuesta;
+    }
+
+    public void desIgualarApuesta()
+    {
+        alcanzoApuesta = false;
+    }
 
 
 }
