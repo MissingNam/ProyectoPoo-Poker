@@ -39,6 +39,11 @@ public class SevenStud extends PokerPadre
             a.añadirCarta(mazo.darCarta());
             a.añadirCarta(mazo.darCarta());
             a.getCartaI(2).voltear();
+            // darle la chance a la carta 0 y 1 de voltearse
+            Carta self = a.getCartaI(0);
+            self.addActionListener(s -> self.voltear());
+            Carta self2 = a.getCartaI(1);
+            self.addActionListener(s -> self2.voltear());
         }
 
         for(int i = 0; i<jugadores.get(0).manoSize(); i++)
@@ -64,6 +69,7 @@ public class SevenStud extends PokerPadre
                 fin++;
             }
         }
+        
 
         // si este if se ejecuta, es porque el jugador no se ha rendido o 
         // algun jugador no ha alcanzado la apuesta
@@ -172,6 +178,22 @@ public class SevenStud extends PokerPadre
             if(rondaActual.getText().equals("Third Street"))
             {
                 fourthStreet();
+            } else
+            if(rondaActual.getText().equals("Fourth Street"))
+            {
+                fifthStreet();
+            } else
+            if(rondaActual.getText().equals("Fifth Street"))
+            {
+                sixthStreet();
+            } else
+            if(rondaActual.getText().equals("Sixth Street"))
+            {
+                sevenStreth();
+            } else
+            if(rondaActual.getText().equals("Seventh Street"))
+            {
+                showdown();
             }
 
         } else if(jugadores.get(jugadorActual).seRindio()) 
@@ -249,15 +271,51 @@ public class SevenStud extends PokerPadre
         rondaActual.setText("Fourth Street");
         rondaRepartir(1,true);
         // aqui añadir el organizar a los jugadores
-        ponerMejorAlInicio();
         for(int i = 0; i<jugadores.size();i++)
         {
             Jugador aEvaluar = jugadores.get(i);
-            aEvaluar.getCartaI(2).cambioActivacion();
-            aEvaluar.getCartaI(3).cambioActivacion();
             mejorJugada(aEvaluar);
-            aEvaluar.getCartaI(2).cambioActivacion();
-            aEvaluar.getCartaI(3).cambioActivacion();
+        }
+        ponerMejorAlInicio();
+        rondaApuestas();
+    }
+
+    public void fifthStreet()
+    {
+        rondaActual.setText("Fifth Street");
+        actualizarLabels();
+
+        rondaRepartir(1,true);
+        for(int i = 0; i<jugadores.size();i++)
+        {
+            Jugador aEvaluar = jugadores.get(i);
+            mejorJugada(aEvaluar);
+        }
+        ponerMejorAlInicio();
+    }
+
+    public void sixthStreet()
+    {
+        rondaActual.setText("Sixth Street");
+        actualizarLabels();
+
+        rondaRepartir(1,true);
+        for(int i = 0; i<jugadores.size();i++)
+        {
+            Jugador aEvaluar = jugadores.get(i);
+            mejorJugada(aEvaluar);
+        }
+        ponerMejorAlInicio();
+    }
+
+    //tralaleor tralala
+    public void sevenStreth()
+    {
+        rondaActual.setText("Seventh Street");
+        rondaRepartir(1,false);
+        for(Jugador jugador: jugadores)
+        {
+            jugador.getCartaI(6).addActionListener(b -> jugador.getCartaI(6).voltear());
         }
         rondaApuestas();
     }
@@ -383,6 +441,7 @@ public class SevenStud extends PokerPadre
 
         jugadores.remove(index);
         jugadores.add(0,jugador1);
+        actualizarPanelJuego();
 
 
     }
