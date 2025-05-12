@@ -1,0 +1,117 @@
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+
+import java.awt.Image;
+import java.awt.event.*;
+
+
+public class Carta extends JButton {
+
+    private int categoria;
+    private String palo;
+    private ImageIcon imagen;
+    private ImageIcon reverso = new ImageIcon("imagenes\\fila-1-columna-1.png");
+    private String ubicacion;
+    private boolean visible = false;
+    private boolean activa = false;
+
+    public Carta(int categoria, String palo)
+    {
+        this.categoria = categoria;
+        this.palo = palo;
+        // colocarle la categoria
+        int columna = categoria;
+        if(columna == 1)
+        {
+            columna = 14;
+        }
+
+        //colocarle el palo
+        int fila = 1;
+        switch(palo)
+        {
+            case "Trebol":
+                fila = 1;
+                break;
+            case "Pica":
+                fila = 2;
+                break;
+            case "Corazon":
+                fila = 3;
+                break;
+            case "Diamante":
+                fila = 4;
+                break;
+            default:
+                fila = 1;
+                break;
+        }
+               
+        ubicacion = ("imagenes\\fila-"+fila+"-columna-"+columna+".png");
+        imagen = new ImageIcon(ubicacion);
+        Image resizedimagen = imagen.getImage().getScaledInstance(59*2, 89*2, Image.SCALE_SMOOTH);
+        imagen = new ImageIcon(resizedimagen);
+        resizedimagen = reverso.getImage().getScaledInstance(59*2,89*2,Image.SCALE_SMOOTH);
+        reverso = new ImageIcon(resizedimagen);
+
+        this.setIcon(reverso);
+        this.setSize(59,89);
+
+        
+
+
+    }
+    
+    /*  Esto fue para hacer pruebas, no lo consideres ya que interferiria con 7-stud
+    @Override
+        protected void processMouseEvent(MouseEvent e)
+        {
+            if(e.getID() == MouseEvent.MOUSE_PRESSED)
+            {
+                voltear();
+            }
+            super.processMouseEvent(e);
+        }
+            */
+
+
+    public String getPalo()
+    {
+        return palo;
+    }
+
+    public int getCategoria()
+    {
+        return categoria;
+    }
+
+    public void voltear()
+    {
+        visible = !visible;
+        if(visible)
+        {
+            this.setIcon(imagen);
+        } else {
+            this.setIcon(reverso);
+        }
+
+    }
+
+    public String toString()
+    {
+        if(visible)
+        {
+            return ("["+categoria+"|"+palo+"]");
+        } else {
+            return ("[####]");
+        }
+    }
+
+    public void cambioActivacion()
+    {
+        activa = !activa;
+    }
+
+
+}
