@@ -54,6 +54,7 @@ public class Mazo {
         return cartas;
     }
 
+    /* Metodo para pruebas, no considerarlo
     public void reubicarCartas()
     {
         int index = 0;
@@ -67,5 +68,6 @@ public class Mazo {
         }
 
     }
+        */
 
 }
