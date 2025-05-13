@@ -19,6 +19,7 @@ public class SevenStud extends PokerPadre
     private JLabel dineroJugadorActual = new JLabel();
     private JLabel dineroAcumulado = new JLabel();
     private JLabel apuestaActual = new JLabel();
+    private JLabel jugadorTurno = new JLabel();
 
     // cosas donde se guarda informacion importante
     private int dineroBanca = 0;
@@ -46,7 +47,7 @@ public class SevenStud extends PokerPadre
             Carta self = a.getCartaI(0);
             self.addActionListener(s -> self.voltear());
             Carta self2 = a.getCartaI(1);
-            self.addActionListener(s -> self2.voltear());
+            self2.addActionListener(s -> self2.voltear());
         }
 
         for(int i = 0; i<jugadores.get(0).manoSize(); i++)
@@ -87,7 +88,7 @@ public class SevenStud extends PokerPadre
             actualizarLabels();
             // poner las cosas
         
-            if(rondaActual.getText().equals("Third Street") && jugadorActual == 0 && primeraVez == 0)
+            if(rondaActual.getText().equals("Third Street") && primeraVez == 0)
             {
                 primeraVez = 1;
                 //boton bring-in
@@ -220,15 +221,17 @@ public class SevenStud extends PokerPadre
     }
 
     // aqui esta todo lo que se va a hacer una vez se alcanze showdown
-    // el usuario eligira algunas de sus cartas, y el juego dira
-    // que juagda es puede ser muy grande, cuidado
+    // se dictara al ganador y se reiniciara el juego
     public void showdown()
     {
 
+        ponerMejorAlInicio();
+        JOptionPane.showMessageDialog(null, "EL Jugador "+(jugadorActual+1)+" Gana!!","Poker",JOptionPane.INFORMATION_MESSAGE);
+        apuesta = 1;
+        Jugador ganador = jugadores.get(jugadorActual);
+        ganador.setDinero(dineroBanca+ganador.getDinero());
 
-
-
-
+        reiniciarJuego();
 
     }
 
@@ -253,10 +256,13 @@ public class SevenStud extends PokerPadre
         rondaActual.setBounds(10,0,250,100);
         dineroJugadorActual.setText("Dinero restante: "+jugadores.get(jugadorActual).getDinero()+"$");
         dineroJugadorActual.setBounds(10,100,250,100);
+        jugadorTurno.setText("Jugador Actual: "+(jugadorActual+1));
+        jugadorTurno.setBounds(10,150,250,100);
         panelInfo.add(dineroJugadorActual);
         panelInfo.add(rondaActual);
+        panelInfo.add(jugadorTurno);
 
-
+        
         //Panel de Juego
         panelJuego.setLayout(null);
         dineroAcumulado.setText("Banca: "+ dineroBanca + " $");
@@ -306,6 +312,7 @@ public class SevenStud extends PokerPadre
             mejorJugada(aEvaluar);
         }
         ponerMejorAlInicio();
+        rondaApuestas();
     }
 
     public void sixthStreet()
@@ -320,6 +327,7 @@ public class SevenStud extends PokerPadre
             mejorJugada(aEvaluar);
         }
         ponerMejorAlInicio();
+        rondaApuestas();
     }
 
     //tralaleor tralala
@@ -341,6 +349,8 @@ public class SevenStud extends PokerPadre
     public void actualizarPanelJuego()
     {
         panelJuego.removeAll();
+        panelJuego.setVisible(false);
+        panelJuego.setVisible(true);
 
         panelJuego.add(dineroAcumulado);
         panelJuego.add(apuestaActual);
@@ -360,6 +370,7 @@ public class SevenStud extends PokerPadre
         dineroJugadorActual.setText("Dinero restante: "+jugadores.get(jugadorActual).getDinero()+"$");
         dineroAcumulado.setText("Banca: "+dineroBanca+" $");
         apuestaActual.setText("Apuesta Actual: "+apuesta+" $");
+        jugadorTurno.setText("Jugador Actual: "+(jugadorActual+1));
         frame.setVisible(true);
 
     }
@@ -421,6 +432,7 @@ public class SevenStud extends PokerPadre
         // colocar al inicio del arrayLits
         jugadorActual = indexPeor;
         actualizarPanelJuego();
+        actualizarLabels();
 
     }
 
@@ -457,6 +469,59 @@ public class SevenStud extends PokerPadre
 
         jugadorActual = index;
         actualizarPanelJuego();
+        actualizarLabels();
+    }
+
+
+    public void reiniciarJuego()
+    {
+        actualizarLabels();
+        actualizarPanelJuego();
+        mazo.vaciar();
+        mazo.llenarMazo();
+        mazo.shuffle();
+        
+        int rotos = 0;
+        for(int i = 0; i<jugadores.size(); i++)
+        {
+            jugadores.get(i).vaciarMano();
+            if(jugadores.get(i).seRindio() == true){ jugadores.get(i).cambioRendido();}
+            if(jugadores.get(i).igualoApuesta() == true){jugadores.get(i).cambioAlcanzoApuesta();}
+
+
+            Set<Integer> llaves = jugadores.keySet();
+        for(Integer b : llaves)
+        {
+            Jugador a = jugadores.get(b);
+            a.setDinero(a.getDinero()-apuesta);
+            dineroBanca += apuesta;
+            a.añadirCarta(mazo.darCarta());
+            a.añadirCarta(mazo.darCarta());
+            a.añadirCarta(mazo.darCarta());
+            a.getCartaI(2).voltear();
+            // darle la chance a la carta 0 y 1 de voltearse
+            Carta self = a.getCartaI(0);
+            self.addActionListener(s -> self.voltear());
+            Carta self2 = a.getCartaI(1);
+            self2.addActionListener(s -> self2.voltear());
+        }
+
+
+            if(jugadores.get(i).getDinero() < apuesta)
+            {
+                rotos ++;
+                jugadores.get(i).cambioRendido();
+            }
+        }
+        actualizarPanelJuego();
+        if(rotos >= jugadores.size()-1)
+        {
+            JOptionPane.showMessageDialog(null, "EL Jugador "+(jugadorActual+1)+" Gana la Final!!","Poker",JOptionPane.INFORMATION_MESSAGE);
+            frame.dispose();
+        } else {
+            thirdStreet();
+        }
+        
     }
 
 }

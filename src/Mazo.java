@@ -8,7 +8,7 @@ public class Mazo {
     {
         String[] palos = new String[4];
         palos[0] = "Diamante";
-        palos[1] = "Espada";
+        palos[1] = "Pica";
         palos[2] = "Corazon";
         palos[3] = "Trebol";
 
@@ -69,5 +69,28 @@ public class Mazo {
 
     }
         */
+
+    public void vaciar()
+    {
+        cartas.clear();
+    }
+
+    public void llenarMazo()
+    {
+        String[] palos = new String[4];
+        palos[0] = "Diamante";
+        palos[1] = "Espada";
+        palos[2] = "Corazon";
+        palos[3] = "Trebol";
+
+        for(int i = 1; i < 14;i++)
+        {
+            for(int j = 0; j < 4; j++)
+            {
+                cartas.add(new Carta(i,palos[j]));
+            }
+        }
+    }
+
 
 }

@@ -44,7 +44,7 @@ public class Carta extends JButton {
                 fila = 4;
                 break;
             default:
-                fila = 1;
+                fila = 2;
                 break;
         }
                

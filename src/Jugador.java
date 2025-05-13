@@ -105,5 +105,10 @@ public class Jugador {
         return jugadaID;
     }
 
+    public void vaciarMano()
+    {
+        mano.clear();
+    }
+
 
 }
