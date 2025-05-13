@@ -1,12 +1,14 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 
 
 public abstract class PokerPadre {
     public final int CARDLENGHT = 59*2;
     public final int CARDHEIGHT = 89*2;
     
-    protected ArrayList<Jugador> jugadores = new ArrayList<>();
+    protected HashMap<Integer,Jugador> jugadores = new HashMap<>();
     protected int apuesta;
     protected int numJugadores;
     protected Mazo mazo = new Mazo();
@@ -16,7 +18,8 @@ public abstract class PokerPadre {
         this.numJugadores = numJugadores;
         for(int i = 0; i < numJugadores; i++)
         {
-            jugadores.add(new Jugador(dineroInicial));
+            Jugador a = new Jugador(dineroInicial);
+            jugadores.put(i, a);
         }
 
         apuesta = apuestaInicial;
@@ -28,10 +31,11 @@ public abstract class PokerPadre {
     public void rondaRepartir(int numero,boolean visible)
     {
         // recorre todos los jugadores y les da una carta
-        Iterator<Jugador> iterador = jugadores.iterator();
+        Set<Integer> llaves = jugadores.keySet();
+        Iterator<Integer> iterador = llaves.iterator();
         while(iterador.hasNext())
         {
-            Jugador aDar = iterador.next();
+            Integer aDar = iterador.next();
             // evitar darle cartas a los rendidos (temas de optimizacion)
             if(visible)
             {
@@ -39,13 +43,13 @@ public abstract class PokerPadre {
                 {
                     Carta añadirCa = mazo.darCarta();
                     añadirCa.voltear();
-                    aDar.añadirCarta(añadirCa);
+                    jugadores.get(aDar).añadirCarta(añadirCa);
                 }
             } else {
                 for(int i = 0; i<numero; i++)
                 {
                     Carta añadirCa = mazo.darCarta();
-                    aDar.añadirCarta(añadirCa);
+                    jugadores.get(aDar).añadirCarta(añadirCa);
                 } 
             }
             

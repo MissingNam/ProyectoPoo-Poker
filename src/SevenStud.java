@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.Font;
 import java.util.Iterator;
+import java.util.Set;
 
 import javax.swing.*;
 
@@ -31,8 +32,10 @@ public class SevenStud extends PokerPadre
         super(apuestaInicial,numJugadores,dineroInicial);
         // darle las cartas a los jugadores al inicio del juego
         mazo.shuffle();
-        for(Jugador a : jugadores)
+        Set<Integer> llaves = jugadores.keySet();
+        for(Integer b : llaves)
         {
+            Jugador a = jugadores.get(b);
             a.setDinero(a.getDinero()-apuesta);
             dineroBanca += apuesta;
             a.añadirCarta(mazo.darCarta());
@@ -148,7 +151,9 @@ public class SevenStud extends PokerPadre
                 // aumentar el valor a la apuesta
                 apuesta = apuesta+aumento;
                 jugadores.get(jugadorActual).setDinero(jugadores.get(jugadorActual).getDinero()-apuesta);
-                jugadores.stream().forEach(jug -> jug.desIgualarApuesta()); 
+                Set<Integer> llaves = jugadores.keySet();
+                llaves.stream().forEach(i -> jugadores.get(i).desIgualarApuesta());
+                //jugadores.stream().forEach(jug -> jug.desIgualarApuesta()); 
                 jugadores.get(jugadorActual).igualoApuesta();
                 jugadorActual++;
                 nextJugador();
@@ -173,7 +178,9 @@ public class SevenStud extends PokerPadre
         } else if(fin >= jugadores.size())
         {
             JOptionPane.showMessageDialog(null, "Se acabaron las apuestas", "Poker", JOptionPane.INFORMATION_MESSAGE);
-            jugadores.stream().forEach(a -> a.cambioAlcanzoApuesta());
+            //jugadores.stream().forEach(a -> a.cambioAlcanzoApuesta());
+            Set<Integer> llaves = jugadores.keySet();
+            llaves.stream().forEach(i -> jugadores.get(i).cambioAlcanzoApuesta());
             // si es third street, lo mandamos a fourthStreet una vez se acaban las apuestas
             if(rondaActual.getText().equals("Third Street"))
             {
@@ -212,9 +219,16 @@ public class SevenStud extends PokerPadre
 
     }
 
-
+    // aqui esta todo lo que se va a hacer una vez se alcanze showdown
+    // el usuario eligira algunas de sus cartas, y el juego dira
+    // que juagda es puede ser muy grande, cuidado
     public void showdown()
     {
+
+
+
+
+
 
     }
 
@@ -313,8 +327,10 @@ public class SevenStud extends PokerPadre
     {
         rondaActual.setText("Seventh Street");
         rondaRepartir(1,false);
-        for(Jugador jugador: jugadores)
+        Set<Integer> llaves = jugadores.keySet();
+        for(Integer index : llaves)
         {
+            Jugador jugador = jugadores.get(index);
             jugador.getCartaI(6).addActionListener(b -> jugador.getCartaI(6).voltear());
         }
         rondaApuestas();
@@ -350,14 +366,15 @@ public class SevenStud extends PokerPadre
 
     public void ponerAlPeorAlInicio()
     {
-        Iterator<Jugador> iterador = jugadores.iterator();
-        Carta menor = iterador.next().getCartaI(2);
+        Set<Integer> llaves = jugadores.keySet();
+        Iterator<Integer> iterador = llaves.iterator();
+        Carta menor = jugadores.get(iterador.next()).getCartaI(2);
         int indexPeor = 0;
         int repeticiones = -1;
         while(iterador.hasNext())
         {
             repeticiones ++;
-            Jugador evaluar = iterador.next();
+            Jugador evaluar = jugadores.get(iterador.next());
             if(menor.getCategoria() > evaluar.getCartaI(2).getCategoria())
             {
                 menor = evaluar.getCartaI(2);
@@ -402,9 +419,8 @@ public class SevenStud extends PokerPadre
             }
         }
         // colocar al inicio del arrayLits
-        Jugador peor = jugadores.remove(indexPeor);
-        jugadores.add(0,peor);
-
+        jugadorActual = indexPeor;
+        actualizarPanelJuego();
 
     }
 
@@ -439,11 +455,8 @@ public class SevenStud extends PokerPadre
             }
         }
 
-        jugadores.remove(index);
-        jugadores.add(0,jugador1);
+        jugadorActual = index;
         actualizarPanelJuego();
-
-
     }
 
 }
