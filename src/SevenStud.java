@@ -482,14 +482,22 @@ public class SevenStud extends PokerPadre
         mazo.shuffle();
         
         int rotos = 0;
-        for(int i = 0; i<jugadores.size(); i++)
+        primeraVez = 0;
+        dineroBanca = 0;
+        for(int i = 0; i<numJugadores; i++)
         {
             jugadores.get(i).vaciarMano();
             if(jugadores.get(i).seRindio() == true){ jugadores.get(i).cambioRendido();}
             if(jugadores.get(i).igualoApuesta() == true){jugadores.get(i).cambioAlcanzoApuesta();}
 
+            if(jugadores.get(i).getDinero() < apuesta)
+            {
+                rotos ++;
+                jugadores.get(i).cambioRendido();
+            }
+        }
 
-            Set<Integer> llaves = jugadores.keySet();
+        Set<Integer> llaves = jugadores.keySet();
         for(Integer b : llaves)
         {
             Jugador a = jugadores.get(b);
@@ -507,12 +515,6 @@ public class SevenStud extends PokerPadre
         }
 
 
-            if(jugadores.get(i).getDinero() < apuesta)
-            {
-                rotos ++;
-                jugadores.get(i).cambioRendido();
-            }
-        }
         actualizarPanelJuego();
         if(rotos >= jugadores.size()-1)
         {
