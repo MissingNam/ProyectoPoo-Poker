@@ -15,7 +15,7 @@ public class Mano {
     }
 
     public int cartaAlta(){
-        int puntuacion;
+        int puntuacion = 0;
         Carta cartaAlta= cartas.get(0);
 
         for(int i =1; i<cartas.size();i++){
@@ -26,7 +26,7 @@ public class Mano {
         }
         puntuacion = cartaAlta.getCategoria();
         if(cartaAlta.getCategoria()==1){
-            puntuacion+=13;
+            puntuacion += 13;
         }
         return puntuacion;
     }

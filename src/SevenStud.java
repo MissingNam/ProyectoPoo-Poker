@@ -218,6 +218,19 @@ public class SevenStud extends PokerPadre
             rondaApuestas();
         }
 
+
+        // terminar el juego si todos se rindieron
+        int rendidos = 0;
+        for(int i = 0; i< jugadores.size(); i++)
+        {
+            if(jugadores.get(i).seRindio() == true){rendidos ++;}
+        }
+        if(rendidos == jugadores.size()-2)
+        {
+            showdown();
+        }
+
+
     }
 
     // aqui esta todo lo que se va a hacer una vez se alcanze showdown
@@ -447,16 +460,29 @@ public class SevenStud extends PokerPadre
 
     public void ponerMejorAlInicio()
     {
+        for(int i = 0; i< jugadores.size(); i++)
+        {
+            Jugador aEvaluar = jugadores.get(i);
+            mejorJugada(aEvaluar);
+        }
+
+
         int index = 0;
         Jugador jugador1 = jugadores.get(0);
+        while(jugador1.seRindio() == true)
+        {
+            index ++;
+            jugador1 = jugadores.get(index);
+        }
+
         for(int i = 1; i<jugadores.size(); i++)
         {
             Jugador jugador2 = jugadores.get(i);
-            if(jugador2.getJugadaId() > jugador1.getJugadaId())
+            if(jugador2.getJugadaId() > jugador1.getJugadaId() && !jugador2.seRindio())
             {
                 jugador1 = jugador2;
                 index = i;
-            } else if(jugador2.getJugadaId() == jugador1.getJugadaId())
+            } else if(jugador2.getJugadaId() == jugador1.getJugadaId() && !jugador2.seRindio())
             {
                 if(jugador2.getPuntaje() > jugador1.getPuntaje())
                 {
