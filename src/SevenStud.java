@@ -56,7 +56,6 @@ public class SevenStud extends PokerPadre
         }
 
         crearGrafico();
-
         thirdStreet();
     }
 
@@ -66,7 +65,7 @@ public class SevenStud extends PokerPadre
     {
         int fin = 0;
         // evaluar que no haya terminado la ronda de apuestas
-        for(int i = 0; i<jugadores.size(); i++)
+        for(int i = 0; i<numJugadores; i++)
         {
             if(jugadores.get(i).seRindio() || jugadores.get(i).igualoApuesta())
             {
@@ -77,7 +76,7 @@ public class SevenStud extends PokerPadre
 
         // si este if se ejecuta, es porque el jugador no se ha rendido o 
         // algun jugador no ha alcanzado la apuesta
-        if(fin < jugadores.size() && !jugadores.get(jugadorActual).seRindio() && !jugadores.get(jugadorActual).igualoApuesta())
+        if(fin < numJugadores && !jugadores.get(jugadorActual).seRindio() && !jugadores.get(jugadorActual).igualoApuesta())
         {
             JButton igualar = new JButton("Igualar");
             JButton aumentar = new JButton("Aumentar");
@@ -176,7 +175,7 @@ public class SevenStud extends PokerPadre
 
             panelJuego.add(rendirse);
 
-        } else if(fin >= jugadores.size())
+        } else if(fin >= numJugadores)
         {
             JOptionPane.showMessageDialog(null, "Se acabaron las apuestas", "Poker", JOptionPane.INFORMATION_MESSAGE);
             //jugadores.stream().forEach(a -> a.cambioAlcanzoApuesta());
@@ -221,11 +220,11 @@ public class SevenStud extends PokerPadre
 
         // terminar el juego si todos se rindieron
         int rendidos = 0;
-        for(int i = 0; i< jugadores.size(); i++)
+        for(int i = 0; i< numJugadores; i++)
         {
             if(jugadores.get(i).seRindio() == true){rendidos ++;}
         }
-        if(rendidos == jugadores.size()-2)
+        if(rendidos == numJugadores-1)
         {
             showdown();
         }
@@ -237,8 +236,11 @@ public class SevenStud extends PokerPadre
     // se dictara al ganador y se reiniciara el juego
     public void showdown()
     {
-
-        ponerMejorAlInicio();
+        for(int i = 0; i<numJugadores; i++)
+        {
+            super.mejorJugada(jugadores.get(i));
+        }
+        empezarConMejor();
         JOptionPane.showMessageDialog(null, "EL Jugador "+(jugadorActual+1)+" Gana!!","Poker",JOptionPane.INFORMATION_MESSAGE);
         apuesta = 1;
         Jugador ganador = jugadores.get(jugadorActual);
@@ -304,12 +306,12 @@ public class SevenStud extends PokerPadre
         rondaActual.setText("Fourth Street");
         rondaRepartir(1,true);
         // aqui añadir el organizar a los jugadores
-        for(int i = 0; i<jugadores.size();i++)
+        for(int i = 0; i<numJugadores;i++)
         {
-            Jugador aEvaluar = jugadores.get(i);
-            mejorJugada(aEvaluar);
+            
+            super.mejorJugada(jugadores.get(i));
         }
-        ponerMejorAlInicio();
+        empezarConMejor();
         rondaApuestas();
     }
 
@@ -319,12 +321,12 @@ public class SevenStud extends PokerPadre
         actualizarLabels();
 
         rondaRepartir(1,true);
-        for(int i = 0; i<jugadores.size();i++)
+        for(int i = 0; i<numJugadores;i++)
         {
-            Jugador aEvaluar = jugadores.get(i);
-            mejorJugada(aEvaluar);
+            
+            super.mejorJugada(jugadores.get(i));
         }
-        ponerMejorAlInicio();
+        empezarConMejor();
         rondaApuestas();
     }
 
@@ -334,12 +336,11 @@ public class SevenStud extends PokerPadre
         actualizarLabels();
 
         rondaRepartir(1,true);
-        for(int i = 0; i<jugadores.size();i++)
+        for(int i = 0; i<numJugadores;i++)
         {
-            Jugador aEvaluar = jugadores.get(i);
-            mejorJugada(aEvaluar);
+            super.mejorJugada(jugadores.get(i));
         }
-        ponerMejorAlInicio();
+        empezarConMejor();
         rondaApuestas();
     }
 
@@ -407,26 +408,26 @@ public class SevenStud extends PokerPadre
                 // Trebol > Diamente > Corazon > Pica
                 int a;
                 int b;
-                if(menor.getPalo() == "Trebol")
+                if(menor.getPalo().equals("Trebol"))
                 {
                     a = 4;
-                } else if(menor.getPalo() == "Diamante")
+                } else if(menor.getPalo().equals("Diamante"))
                 {
                     a = 3;
-                } else if(menor.getPalo() == "Corazon")
+                } else if(menor.getPalo().equals("Corazon"))
                 {
                     a = 2;
                 } else {
                     a = 1;
                 } 
 
-                if(evaluar.getCartaI(2).getPalo() == "Trebol")
+                if(evaluar.getCartaI(2).getPalo().equals("Trebol"))
                 {
                     b = 4;
-                } else if(evaluar.getCartaI(2).getPalo() == "Diamante")
+                } else if(evaluar.getCartaI(2).getPalo().equals("Diamante"))
                 {
                     b = 3;
-                } else if(evaluar.getCartaI(2).getPalo() == "Corazon")
+                } else if(evaluar.getCartaI(2).getPalo().equals("Corazon"))
                 {
                     b = 2;
                 } else {
@@ -452,18 +453,17 @@ public class SevenStud extends PokerPadre
 
     public void nextJugador()
     {
-        if(jugadorActual >= jugadores.size())
+        if(jugadorActual >= numJugadores)
         {
             jugadorActual = 0;
         }
     }
 
-    public void ponerMejorAlInicio()
+    public void empezarConMejor()
     {
-        for(int i = 0; i< jugadores.size(); i++)
+        for(int i = 0; i< numJugadores; i++)
         {
-            Jugador aEvaluar = jugadores.get(i);
-            mejorJugada(aEvaluar);
+            super.mejorJugada(jugadores.get(i));
         }
 
 
@@ -475,14 +475,14 @@ public class SevenStud extends PokerPadre
             jugador1 = jugadores.get(index);
         }
 
-        for(int i = 1; i<jugadores.size(); i++)
+        for(int i = 0; i<numJugadores; i++)
         {
             Jugador jugador2 = jugadores.get(i);
-            if(jugador2.getJugadaId() > jugador1.getJugadaId() && !jugador2.seRindio())
+            if(jugador2.getJugadaId() > jugador1.getJugadaId())
             {
                 jugador1 = jugador2;
                 index = i;
-            } else if(jugador2.getJugadaId() == jugador1.getJugadaId() && !jugador2.seRindio())
+            } else if(jugador2.getJugadaId() == jugador1.getJugadaId())
             {
                 if(jugador2.getPuntaje() > jugador1.getPuntaje())
                 {
@@ -494,6 +494,13 @@ public class SevenStud extends PokerPadre
         }
 
         jugadorActual = index;
+        for(int i = 0; i<numJugadores; i++)
+        {
+            System.out.println("Id"+jugadores.get(i).getJugadaId());
+            System.out.println("Puntos"+jugadores.get(i).getPuntaje());
+            
+        }
+        System.out.println("#############");
         actualizarPanelJuego();
         actualizarLabels();
     }
@@ -542,7 +549,7 @@ public class SevenStud extends PokerPadre
 
 
         actualizarPanelJuego();
-        if(rotos >= jugadores.size()-1)
+        if(rotos >= numJugadores-1)
         {
             JOptionPane.showMessageDialog(null, "EL Jugador "+(jugadorActual+1)+" Gana la Final!!","Poker",JOptionPane.INFORMATION_MESSAGE);
             frame.dispose();

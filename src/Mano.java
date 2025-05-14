@@ -37,7 +37,7 @@ public class Mano {
             Carta cartaA = cartas.get(i);
             for(int j =1; j<cartas.size();j++){
                 Carta cartaB = cartas.get(j);
-                if(cartaA.getCategoria() == cartaB.getCategoria()){
+                if(cartaA.getCategoria() == cartaB.getCategoria() && !cartaA.getPalo().equals( cartaB.getPalo())){
                     puntuacion = cartaA.getCategoria()+cartaB.getCategoria()+100;
                     if(cartaA.getCategoria()==1){
                         puntuacion+=26;

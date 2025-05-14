@@ -124,13 +124,14 @@ public abstract class PokerPadre {
             jugador.setJugadaId(9);
             jugador.setPuntaje(puntaje);
         }
-
+        /* 
         puntaje = mano.buscarEscaleraReal();
         if(puntaje != 0)
         {
             jugador.setJugadaId(10);
             jugador.setPuntaje(puntaje);
         }
+            */
         
 
     }

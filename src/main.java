@@ -8,7 +8,7 @@ public class main {
     private static JFrame frame = new JFrame();
     private static JComboBox<String> modoJuego = new JComboBox<>();
     private static JTextField apuestaInicial = new JTextField("1");
-    private static JTextField dineroInicial = new JTextField("20");
+    private static JTextField dineroInicial = new JTextField("200");
 
     public static void main(String[] args) {
         // grafico de inicio para solicitar todo
