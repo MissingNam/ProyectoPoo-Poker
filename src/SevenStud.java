@@ -251,15 +251,15 @@ public class SevenStud extends PokerPadre
     public void crearGrafico()
     {
         // todo lo relacionado al frame y paneles
-        frame.setSize(1000,500);
+        frame.setSize(1250,500);
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(null);
         
-        panelJuego.setBounds(0,0,750,500);
+        panelJuego.setBounds(0,0,1000,500);
         panelJuego.setBackground(Color.GREEN);
         
-        panelInfo.setBounds(750,0,250,500);
+        panelInfo.setBounds(1000,0,250,500);
         panelInfo.setBackground(Color.GRAY);
         panelInfo.setLayout(null);
         mazo.getCartaI(0).setBounds(75,250,CARDLENGHT,CARDHEIGHT);
