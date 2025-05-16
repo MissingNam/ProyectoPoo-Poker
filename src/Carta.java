@@ -13,7 +13,7 @@ public class Carta extends JButton {
     private ImageIcon imagen;
     private ImageIcon reverso = new ImageIcon("imagenes\\fila-1-columna-1.png");
     private String ubicacion;
-    private boolean visible = false;
+    private boolean mirable = false;
     private boolean activa = false;
 
     public Carta(int categoria, String palo)
@@ -88,8 +88,8 @@ public class Carta extends JButton {
 
     public void voltear()
     {
-        visible = !visible;
-        if(visible)
+        mirable = !mirable;
+        if(mirable)
         {
             this.setIcon(imagen);
         } else {
@@ -100,7 +100,7 @@ public class Carta extends JButton {
 
     public String toString()
     {
-        if(visible)
+        if(mirable)
         {
             return ("["+categoria+"|"+palo+"]");
         } else {
@@ -111,6 +111,25 @@ public class Carta extends JButton {
     public void cambioActivacion()
     {
         activa = !activa;
+    }
+
+    public void activar()
+    {
+        activa = true;
+    }
+    public void desactivar()
+    {
+        activa = false;
+    }
+
+    public boolean estaActiva()
+    {
+        return activa;
+    }
+
+    public boolean esMirable()
+    {
+        return mirable;
     }
 
 

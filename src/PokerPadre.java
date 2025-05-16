@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 public abstract class PokerPadre {
@@ -60,7 +61,21 @@ public abstract class PokerPadre {
     
     public void mejorJugada(Jugador jugador)
     {
-        Mano mano = new Mano(jugador.getCartas());
+        ArrayList<Carta> aEvaluar = new ArrayList<>();
+        /* 
+        aEvaluar.addAll(jugador.getCartas().stream().
+            filter(a -> a.estaActiva() == true).collect(Collectors.toList()));
+
+        Mano mano = new Mano(aEvaluar);
+        */
+        for(int i = 0; i<jugador.getCartas().size();i++)
+        {
+            if(jugador.getCartaI(i).esMirable())
+            {
+                aEvaluar.add(jugador.getCartaI(i));
+            }
+        }
+        Mano mano = new Mano(aEvaluar);
 
         int puntaje = mano.cartaAlta();
         if(puntaje != 0)

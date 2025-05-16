@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.ActionListener;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -27,6 +28,7 @@ public class SevenStud extends PokerPadre
 
     //banderas, 
     private int primeraVez = 0;
+    private int todosEvaluados = 0;
 
     public SevenStud(int apuestaInicial, int numJugadores,int dineroInicial)
     {
@@ -236,17 +238,61 @@ public class SevenStud extends PokerPadre
     // se dictara al ganador y se reiniciara el juego
     public void showdown()
     {
-        for(int i = 0; i<numJugadores; i++)
-        {
-            super.mejorJugada(jugadores.get(i));
-        }
-        empezarConMejor();
-        JOptionPane.showMessageDialog(null, "EL Jugador "+(jugadorActual+1)+" Gana!!","Poker",JOptionPane.INFORMATION_MESSAGE);
-        apuesta = 1;
-        Jugador ganador = jugadores.get(jugadorActual);
-        ganador.setDinero(dineroBanca+ganador.getDinero());
+        rondaActual.setText("Showdown");
+        actualizarPanelJuego();
+        actualizarLabels();
 
-        reiniciarJuego();
+        if(todosEvaluados < jugadores.size())
+        {
+            JOptionPane.showMessageDialog(null,"Voltee las 5 cartas que desea jugar","Poker",JOptionPane.INFORMATION_MESSAGE);
+            // aqui se empieza a poner los action listener a las cartas
+            for(int i = 0; i<jugadores.get(jugadorActual).getCartas().size();i++)
+            {
+                Carta self = jugadores.get(jugadorActual).getCartaI(i);
+                 // Remover todos los ActionListeners existentes
+                for (ActionListener al : self.getActionListeners()) {
+                    self.removeActionListener(al);
+                }
+                self.addActionListener(a -> self.voltear());
+            }
+
+            // aqui se crea el boton y la lambda que lo controla
+            JButton ofrecer = new JButton("Ofrecer");
+            ofrecer.setBounds(450,75,100,25);
+            ofrecer.addActionListener(b -> {
+                int activas = 0;
+                for(int i = 0; i<jugadores.get(jugadorActual).getCartas().size();i++)
+                {
+                    if(jugadores.get(jugadorActual).getCartaI(i).esMirable())
+                    {
+                        
+                        activas ++;
+                    }
+                }
+
+                if(activas <= 5)
+                {
+                    mejorJugada(jugadores.get(jugadorActual));
+                    jugadorActual ++;
+                    todosEvaluados ++;
+                    nextJugador();
+                    showdown();
+                } else {
+                    showdown();
+                }
+
+            });
+            panelJuego.add(ofrecer);
+        } else {
+
+
+            JOptionPane.showMessageDialog(null, "EL Jugador "+(jugadorActual+1)+" Gana!!","Poker",JOptionPane.INFORMATION_MESSAGE);
+            apuesta = 1;
+            Jugador ganador = jugadores.get(jugadorActual);
+            ganador.setDinero(dineroBanca+ganador.getDinero());
+
+            reiniciarJuego();
+        }
 
     }
 
@@ -308,7 +354,6 @@ public class SevenStud extends PokerPadre
         // aqui añadir el organizar a los jugadores
         for(int i = 0; i<numJugadores;i++)
         {
-            
             super.mejorJugada(jugadores.get(i));
         }
         empezarConMejor();
@@ -323,8 +368,8 @@ public class SevenStud extends PokerPadre
         rondaRepartir(1,true);
         for(int i = 0; i<numJugadores;i++)
         {
-            
             super.mejorJugada(jugadores.get(i));
+            
         }
         empezarConMejor();
         rondaApuestas();
@@ -338,7 +383,9 @@ public class SevenStud extends PokerPadre
         rondaRepartir(1,true);
         for(int i = 0; i<numJugadores;i++)
         {
+            
             super.mejorJugada(jugadores.get(i));
+            
         }
         empezarConMejor();
         rondaApuestas();
@@ -352,6 +399,7 @@ public class SevenStud extends PokerPadre
         Set<Integer> llaves = jugadores.keySet();
         for(Integer index : llaves)
         {
+            
             Jugador jugador = jugadores.get(index);
             jugador.getCartaI(6).addActionListener(b -> jugador.getCartaI(6).voltear());
         }
@@ -494,6 +542,7 @@ public class SevenStud extends PokerPadre
         }
 
         jugadorActual = index;
+        /*  usado para debug
         for(int i = 0; i<numJugadores; i++)
         {
             System.out.println("Id"+jugadores.get(i).getJugadaId());
@@ -501,6 +550,7 @@ public class SevenStud extends PokerPadre
             
         }
         System.out.println("#############");
+        */
         actualizarPanelJuego();
         actualizarLabels();
     }
@@ -558,5 +608,18 @@ public class SevenStud extends PokerPadre
         }
         
     }
+
+    public void cambiarActivacionCartasVisibles(Jugador jugador)
+    {
+        for(int j = 0; j<jugador.getCartas().size(); j++)
+        {
+            if(jugador.getCartaI(j).esMirable())
+            {
+                jugador.getCartaI(j).cambioActivacion();
+            }
+        }
+    }
+    
+
 
 }
