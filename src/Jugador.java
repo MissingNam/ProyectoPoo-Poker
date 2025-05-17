@@ -6,6 +6,7 @@ public class Jugador {
     private boolean rendido;
     private boolean alcanzoApuesta;
     private int puntaje;
+    private int jugadaID;
 
     public Jugador(int dineroInicial)
     {
@@ -81,6 +82,32 @@ public class Jugador {
     public void desIgualarApuesta()
     {
         alcanzoApuesta = false;
+    }
+
+    public void setPuntaje(int newPuntaje)
+    {
+        puntaje = newPuntaje;
+    }
+
+    public int getPuntaje()
+    {
+        return puntaje;
+    }
+
+
+    public void setJugadaId(int newId)
+    {
+        jugadaID = newId;
+    }
+
+    public int getJugadaId()
+    {
+        return jugadaID;
+    }
+
+    public void vaciarMano()
+    {
+        mano.clear();
     }
 
 
