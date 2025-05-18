@@ -14,8 +14,8 @@ public class SevenStud extends PokerPadre
 
     // cosas para lo grafico
     private JFrame frame = new JFrame();
-    private JPanel panelInfo = new JPanel();
-    private JPanel panelJuego = new JPanel();
+    private JImagePanel panelInfo = new JImagePanel("imagenes/Fondos/mesaMadera.jpg");
+    private JImagePanel panelJuego = new JImagePanel("imagenes/Fondos/mesaPoker.jpg");
     private JLabel rondaActual = new JLabel("Third-Street");
     private JLabel dineroJugadorActual = new JLabel();
     private JLabel dineroAcumulado = new JLabel();
@@ -305,20 +305,23 @@ public class SevenStud extends PokerPadre
         frame.setLayout(null);
         
         panelJuego.setBounds(0,0,1000,500);
-        panelJuego.setBackground(Color.GREEN);
+        //panelJuego.setBackground(Color.GREEN);
         
         panelInfo.setBounds(1000,0,250,500);
-        panelInfo.setBackground(Color.GRAY);
+        //panelInfo.setBackground(Color.GRAY);
         panelInfo.setLayout(null);
         mazo.getCartaI(0).setBounds(75,250,CARDLENGHT,CARDHEIGHT);
         panelInfo.add(mazo.getCartaI(0));
 
         rondaActual.setFont(new Font("Agency FB",Font.BOLD,48));
+        rondaActual.setForeground(Color.WHITE);
         rondaActual.setBounds(10,0,250,100);
         dineroJugadorActual.setText("Dinero restante: "+jugadores.get(jugadorActual).getDinero()+"$");
         dineroJugadorActual.setBounds(10,100,250,100);
+        dineroJugadorActual.setForeground(Color.WHITE);
         jugadorTurno.setText("Jugador Actual: "+(jugadorActual+1));
         jugadorTurno.setBounds(10,150,250,100);
+        jugadorTurno.setForeground(Color.WHITE);
         panelInfo.add(dineroJugadorActual);
         panelInfo.add(rondaActual);
         panelInfo.add(jugadorTurno);
@@ -328,9 +331,11 @@ public class SevenStud extends PokerPadre
         panelJuego.setLayout(null);
         dineroAcumulado.setText("Banca: "+ dineroBanca + " $");
         dineroAcumulado.setFont(new Font("Agency FB",Font.BOLD,48));
-        dineroAcumulado.setBounds(200,0,250,100);
+        dineroAcumulado.setBounds(600,50,250,100);
+        dineroAcumulado.setForeground(Color.WHITE);
         apuestaActual.setText("Apuesta Actual: "+apuesta+" $");
         apuestaActual.setBounds(200,100,250,25);
+        apuestaActual.setForeground(Color.WHITE);
         panelJuego.add(dineroAcumulado);
         panelJuego.add(apuestaActual);
 
@@ -448,48 +453,12 @@ public class SevenStud extends PokerPadre
         {
             repeticiones ++;
             Jugador evaluar = jugadores.get(iterador.next());
-            if(menor.getCategoria() > evaluar.getCartaI(2).getCategoria())
-            {
-                menor = evaluar.getCartaI(2);
-                indexPeor = repeticiones;
-            } else if(menor.getCategoria() == evaluar.getCartaI(2).getCategoria()){
-                // Trebol > Diamente > Corazon > Pica
-                int a;
-                int b;
-                if(menor.getPalo().equals("Trebol"))
-                {
-                    a = 4;
-                } else if(menor.getPalo().equals("Diamante"))
-                {
-                    a = 3;
-                } else if(menor.getPalo().equals("Corazon"))
-                {
-                    a = 2;
-                } else {
-                    a = 1;
-                } 
-
-                if(evaluar.getCartaI(2).getPalo().equals("Trebol"))
-                {
-                    b = 4;
-                } else if(evaluar.getCartaI(2).getPalo().equals("Diamante"))
-                {
-                    b = 3;
-                } else if(evaluar.getCartaI(2).getPalo().equals("Corazon"))
-                {
-                    b = 2;
-                } else {
-                    b = 1;
-                } 
-
-                if(b < a)
+            int comparacion = menor.compareTo(evaluar.getCartaI(2));
+                if(comparacion == 0)
                 {
                     menor = evaluar.getCartaI(2);
                     indexPeor = repeticiones;
                 }
-
-
-            }
         }
         // colocar al inicio del arrayLits
         jugadorActual = indexPeor;

@@ -6,7 +6,7 @@ import java.awt.Image;
 import java.awt.event.*;
 
 
-public class Carta extends JButton {
+public class Carta extends JButton implements Comparable<Carta> {
 
     private int categoria;
     private String palo;
@@ -130,6 +130,24 @@ public class Carta extends JButton {
     public boolean esMirable()
     {
         return mirable;
+    }
+
+    public int compareTo(Carta otraCarta)
+    {
+        if(this.getCategoria() > otraCarta.getCategoria())
+        {
+            return 1;
+        } else if(this.getCategoria() == otraCarta.getCategoria())
+        {
+            if(this.getPalo().charAt(0) > otraCarta.getPalo().charAt(0))
+            {
+                return 1;
+            } else {
+                return 0;
+            }
+        } else {
+            return 0;
+        }
     }
 
 
