@@ -39,6 +39,10 @@ public class Mazo {
         for(int i = 0; i<n ; i++)
         {
             cartasRetorno.add(cartas.remove(0));
+            if(this.size()==0){
+                this.llenarMazo();
+                this.shuffle();
+            }
         }
 
         return cartasRetorno;
@@ -90,6 +94,16 @@ public class Mazo {
                 cartas.add(new Carta(i,palos[j]));
             }
         }
+    }
+
+    public void añadirAMazo(Carta carta)
+    {
+        cartas.add(carta);
+    }
+
+    public int size()
+    {
+        return cartas.size();
     }
 
 

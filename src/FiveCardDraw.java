@@ -21,20 +21,18 @@ public class FiveCardDraw extends PokerPadre{
     private JLabel turnoJugador;
     private JLabel bote;
 
-    
     private ArrayList<Carta> descartes;
 
-    private int jugadorActual=0;
-    private int dineroDelBote=0;
-    private int evaluarApuestas=0;
-    private int evaluarDescartes=0;
-    private int jugadoresNoRendidos=numJugadores;
+    private int jugadorActual;
+    private int dineroDelBote;
+    private int evaluarApuestas;
+    private int evaluarDescartes;
+    private int jugadoresNoRendidos;
 
-    private boolean primeraVez=true;
-    private boolean primeraRonda=true;
-    private boolean rondaDescartesB=false;
-    private boolean segundaRondaApuesta=false;
-    private boolean showdownB=false;
+    private boolean primeraVez;
+    private boolean primeraRonda;
+    private boolean rondaDescartesB;
+    private boolean segundaRondaApuesta;
 
     private String fondoBoton="imagenes\\Fondos\\fondoBotones.PNG";
 
@@ -42,24 +40,47 @@ public class FiveCardDraw extends PokerPadre{
         super(apuestaInicial,numJugadores,dineroInicial);
         descartes = new ArrayList<>();
         mazo.shuffle();
-        sistemaDeJuego();
+        reiniciarJuego();
     }
 
     public void reiniciarJuego(){
         dineroDelBote = 0;
         jugadorActual =0;
-        primeraVez = true;
+        primeraVez=true;
+        primeraRonda=true;
+        rondaDescartesB=false;
+        segundaRondaApuesta=false;
         evaluarApuestas =0;
+        evaluarDescartes=0;
+        apuesta=0;
+        jugadoresNoRendidos=numJugadores;
+        mazo.vaciar();
+        mazo.llenarMazo();
+        mazo.shuffle();
+        descartes.clear();
+        for(int i=0; i<numJugadores;i++){
+            jugadores.get(i).vaciarMano();
+            jugadores.get(i).setPuntaje(0);
+            jugadores.get(i).setJugadaId(0);
+            jugadores.get(i).setDineroApostado(0);
+            if(jugadores.get(i).seRindio()){
+                jugadores.get(i).cambioRendido();
+            }
+        }
+        sistemaDeJuego();
     }
 
     public void sistemaDeJuego(){
         rondaRepartir(5, false);
         creacionDeJuego();
-        rondaApuestas();
         actualizarCartas();
     }
 
     public void creacionDeJuego(){
+        if(ventanaDeJuego != null){
+            ventanaDeJuego.dispose();
+        }
+        
         ImageIcon fondoBotonOriginal = new ImageIcon(fondoBoton);
 
         ventanaDeJuego = new JFrame("Five Card Draw");
@@ -96,7 +117,7 @@ public class FiveCardDraw extends PokerPadre{
         ventanaDeJuego.add(regresar);
 
         regresar.addActionListener(e -> {
-            ventanaDeJuego.dispose();;
+            ventanaDeJuego.dispose();
         });
 
         turnoJugador = new JLabel("Turno del jugador "+(jugadorActual+1));
@@ -276,14 +297,12 @@ public class FiveCardDraw extends PokerPadre{
 
         descartar.addActionListener(e->{
             ArrayList<Carta> cartasDelJugador = jugadores.get(jugadorActual).getCartas();
-            Iterator<Carta> it = cartasDelJugador.iterator();
             int cartasRemovidas=0;
-            while (it.hasNext()) {
-                Carta c = it.next();
-                if (c.esMirable()) {
-                    it.remove();
+            for(int i=0; i<cartasDelJugador.size();i++){
+                if(cartasDelJugador.get(i).esMirable()){
+                    descartes.add(cartasDelJugador.get(i));
+                    jugadores.get(jugadorActual).getCartas().remove(cartasDelJugador.get(i));
                     cartasRemovidas++;
-                    descartes.add(c);
                 }
             }
             jugadores.get(jugadorActual).añadirCartas(mazo.darNCartas(cartasRemovidas));
@@ -320,8 +339,9 @@ public class FiveCardDraw extends PokerPadre{
             if(!primeraVez){
                 jugadores.get(jugadorActual).cambioRendido();
                 jugadoresNoRendidos--;
-                buscarRendidos();
-                pasarJugador();
+                if(!buscarRendidos()){
+                    pasarJugador();
+                }
             }
         });
 
@@ -367,7 +387,6 @@ public class FiveCardDraw extends PokerPadre{
 
         pasar.addActionListener(e ->{
             if(jugadores.get(jugadorActual).getDineroApostado() == apuesta || rondaDescartesB){
-                System.out.println(segundaRondaApuesta);;
                 if(segundaRondaApuesta){
                     evaluarApuestas++;
                     if(evaluarApuestas==jugadoresNoRendidos){
@@ -424,29 +443,40 @@ public class FiveCardDraw extends PokerPadre{
                 }
             }
         });
+        if(primeraVez){
+            apostar.setVisible(true);
+            rendirse.setVisible(false);
+            pasar.setVisible(false);
+            voltearCartas.setVisible(false);
+            descartar.setVisible(false);
+            subir.setVisible(false);
+            turnoJugador.setText("Turno del jugador "+(jugadorActual+1));
+            apuestaActual.setText("Apuesta actual:"+apuesta);
+            dineroJugador.setText("Fichas: "+jugadores.get(jugadorActual).getDinero());
+            bote.setText("Bote: "+ dineroDelBote);
+        }
         
         ventanaDeJuego.add(tablero);
         ventanaDeJuego.setResizable(false);
         ventanaDeJuego.setVisible(true);
     }
 
-    @Override
-    public void rondaApuestas(){
-    }
-
-    public void buscarRendidos(){
-        Jugador ganador = null;
+    public boolean buscarRendidos(){
+        int jugadorGanador =0;
         if(jugadoresNoRendidos == 1){
             for(int i =0;i<numJugadores;i++){
-                ganador=jugadores.get(i);
+                if(!jugadores.get(i).seRindio()){
+                    jugadorGanador=i;
+                }
             }
         }
-        if(ganador != null){
-            JOptionPane.showMessageDialog(null, "El jugador: "+(jugadorActual+1)+" Es el ganador", 
+        if(jugadorGanador != 0){
+            JOptionPane.showMessageDialog(null, "El jugador: "+(jugadorGanador+1)+" Es el ganador", 
                                     "Ganador", JOptionPane.ERROR_MESSAGE); 
-
-            ventanaDeJuego.dispose();
+            reiniciarJuego();
+            return true;
         }
+        return false;
     }
 
     private void pasarJugador(){
@@ -479,25 +509,44 @@ public class FiveCardDraw extends PokerPadre{
 
     @Override
     public void showdown(){
-        Jugador ganador =null;
-        System.out.println("error en showdown");
-        int puntosGanador=0;
-        for(int i=0; i<numJugadores;i++){
-            if(!jugadores.get(i).seRindio()){
-                System.out.println("error mejor jugada");
-                mejorJugada(jugadores.get(i));
-            } 
-        }
-        for(int i=0; i<numJugadores;i++){
-            if(!jugadores.get(i).seRindio()){
-                if(jugadores.get(i).getPuntaje()>puntosGanador){
-                    ganador=jugadores.get(i);
+        for(int i =0; i< numJugadores;i++){
+            for(int j =0; j<jugadores.get(i).getCartas().size();j++){
+                if(jugadores.get(i).getCartaI(j).esMirable()==false){    
+                    jugadores.get(i).getCartaI(j).voltear();
                 }
-            } 
+            }
+            mejorJugada(jugadores.get(i));
         }
+
+        int index = 0;
+        Jugador jugador1 = jugadores.get(0);
+        while(jugador1.seRindio() == true)
+        {
+            index ++;
+            jugador1 = jugadores.get(index);
+        }
+
+        for(int i = 0; i<numJugadores; i++)
+        {
+            Jugador jugador2 = jugadores.get(i);
+            if(jugador2.getJugadaId() > jugador1.getJugadaId())
+            {
+                jugador1 = jugador2;
+                index = i;
+            } else if(jugador2.getJugadaId() == jugador1.getJugadaId())
+            {
+                if(jugador2.getPuntaje() > jugador1.getPuntaje())
+                {
+                    jugador1 = jugador2;
+                    index = i;
+                }
+
+            }
+        }
+        jugadorActual=index;
+        actualizarCartas();
         JOptionPane.showMessageDialog(null, "El jugador: "+(jugadorActual+1)+" Es el ganador", 
                                     "Ganador", JOptionPane.ERROR_MESSAGE); 
-        ventanaDeJuego.dispose();
-
+        reiniciarJuego();
     }
 }

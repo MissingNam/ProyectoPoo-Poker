@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
 import java.util.Set;
@@ -80,6 +81,8 @@ public class SevenStud extends PokerPadre
         // algun jugador no ha alcanzado la apuesta
         if(fin < numJugadores && !jugadores.get(jugadorActual).seRindio() && !jugadores.get(jugadorActual).igualoApuesta())
         {
+            ImageIcon fondoBotonOriginal = new ImageIcon("imagenes\\Fondos\\fondoBotones.PNG");
+
             JButton igualar = new JButton("Igualar");
             JButton aumentar = new JButton("Aumentar");
             JButton rendirse = new JButton("Rendirse");
@@ -129,6 +132,13 @@ public class SevenStud extends PokerPadre
             });
 
             igualar.setBounds(450,50,100,25);
+            Image igualarFondoImagen = fondoBotonOriginal.getImage().getScaledInstance(
+                        100, 25, 
+                        Image.SCALE_SMOOTH);
+            ImageIcon iguarlarIcon= new ImageIcon(igualarFondoImagen);
+            igualar.setVerticalTextPosition(JButton.CENTER);
+            igualar.setHorizontalTextPosition(JButton.CENTER);
+            igualar.setIcon(iguarlarIcon);
             panelJuego.add(igualar);
 
             // boton para aumentar la apuesta
@@ -161,6 +171,7 @@ public class SevenStud extends PokerPadre
                 nextJugador();
                 actualizarLabels();
                 rondaApuestas();
+
             });
             panelJuego.add(aumentar);
 
@@ -176,6 +187,31 @@ public class SevenStud extends PokerPadre
             });
 
             panelJuego.add(rendirse);
+
+            Image bringInFondoImagen = fondoBotonOriginal.getImage().getScaledInstance(
+                        100, 25, 
+                        Image.SCALE_SMOOTH);
+            ImageIcon bringInIcon= new ImageIcon(bringInFondoImagen);
+            bringIn.setIcon(bringInIcon);
+            bringIn.setVerticalTextPosition(JButton.CENTER);
+            bringIn.setHorizontalTextPosition(JButton.CENTER);
+
+            Image aumentarFondoImagen = fondoBotonOriginal.getImage().getScaledInstance(
+                        100, 25, 
+                        Image.SCALE_SMOOTH);
+            ImageIcon aumentarIcon= new ImageIcon(aumentarFondoImagen);
+            aumentar.setIcon(aumentarIcon);
+            aumentar.setVerticalTextPosition(JButton.CENTER);
+            aumentar.setHorizontalTextPosition(JButton.CENTER);
+
+
+            Image rendirseFondoImagen = fondoBotonOriginal.getImage().getScaledInstance(
+                        100, 25, 
+                        Image.SCALE_SMOOTH);
+            ImageIcon rendirseIcon= new ImageIcon(rendirseFondoImagen);
+            rendirse.setIcon(rendirseIcon);
+            rendirse.setVerticalTextPosition(JButton.CENTER);
+            rendirse.setHorizontalTextPosition(JButton.CENTER);
 
         } else if(fin >= numJugadores)
         {
@@ -231,6 +267,7 @@ public class SevenStud extends PokerPadre
             showdown();
         }
 
+        
 
     }
 

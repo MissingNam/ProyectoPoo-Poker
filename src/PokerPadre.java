@@ -27,7 +27,6 @@ public abstract class PokerPadre {
 
     }
     
-    public abstract void rondaApuestas();
 
     public void rondaRepartir(int numero,boolean visible)
     {
