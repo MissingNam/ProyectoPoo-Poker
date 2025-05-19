@@ -9,7 +9,6 @@ import java.io.IOException;
 
 
 public class Carta extends JButton implements Comparable<Carta> {
-public class Carta extends JButton implements Comparable<Carta> {
 
     private int categoria;
     private String palo;
@@ -103,7 +102,6 @@ public class Carta extends JButton implements Comparable<Carta> {
 
     public String toString()
     {
-        if(mirable)
         if(mirable)
         {
             return ("["+categoria+"|"+palo+"]");

@@ -3,9 +3,9 @@ import java.util.ArrayList;
 public class Jugador {
     private ArrayList<Carta> mano = new ArrayList<>();
     private int dinero;
-    private boolean rendido;
-    private boolean alcanzoApuesta;
-    private int puntaje;
+    private boolean rendido = false;
+    private boolean alcanzoApuesta = false;
+    private int puntaje = 0;
     private int jugadaID;
     private int dineroApostado;
 
