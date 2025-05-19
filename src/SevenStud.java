@@ -448,19 +448,18 @@ public class SevenStud extends PokerPadre
         Iterator<Integer> iterador = llaves.iterator();
         Carta menor = jugadores.get(iterador.next()).getCartaI(2);
         int indexPeor = 0;
-        int repeticiones = -1;
         while(iterador.hasNext())
         {
-            repeticiones ++;
-            Jugador evaluar = jugadores.get(iterador.next());
+            int llave = iterador.next();
+            Jugador evaluar = jugadores.get(llave);
             int comparacion = menor.compareTo(evaluar.getCartaI(2));
-                if(comparacion == 0)
+                if(comparacion == 1)
                 {
                     menor = evaluar.getCartaI(2);
-                    indexPeor = repeticiones;
+                    indexPeor = llave;
                 }
         }
-        // colocar al inicio del arrayLits
+        // empezar con la index del pero
         jugadorActual = indexPeor;
         actualizarPanelJuego();
         actualizarLabels();
@@ -536,6 +535,7 @@ public class SevenStud extends PokerPadre
         int rotos = 0;
         primeraVez = 0;
         dineroBanca = 0;
+        todosEvaluados = 0;
         for(int i = 0; i<numJugadores; i++)
         {
             jugadores.get(i).vaciarMano();
