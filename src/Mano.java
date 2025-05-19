@@ -224,8 +224,8 @@ public class Mano {
         ordenar(cartas);
         boolean esEscaleraReal=true;
         if(buscarEscalera()!=0 && buscarColor() != 0){
-            if(cartas.get(cartas.size()-1).getCategoria()==1){
-                for(int i =0; i<cartas.size()-1;i++){
+            if(cartas.get(cartas.size()-1).getCategoria()==1 && cartas.get(0).getCategoria()==13){
+                for(int i =0; i<cartas.size()-2;i++){
                     Carta cartaA = cartas.get(i);
                     Carta cartaB = cartas.get(i+1);
                     if(cartaA.getCategoria() != (cartaB.getCategoria()+1)){

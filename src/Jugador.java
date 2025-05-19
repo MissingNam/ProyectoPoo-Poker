@@ -7,6 +7,7 @@ public class Jugador {
     private boolean alcanzoApuesta;
     private int puntaje;
     private int jugadaID;
+    private int dineroApostado;
 
     public Jugador(int dineroInicial)
     {
@@ -110,5 +111,15 @@ public class Jugador {
         mano.clear();
     }
 
+    public void setDineroApostado(int dineroApostado){
+        this.dineroApostado = dineroApostado;
+    }
 
+    public int getDineroApostado(){
+        return dineroApostado;
+    }
+
+    public void agregarDineroApostado(int dineroApostado){
+        this.dineroApostado+=dineroApostado;
+    }
 }

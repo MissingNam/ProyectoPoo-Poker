@@ -61,6 +61,14 @@ public class main {
         {
             if(modoJuego.getSelectedItem() == "5 Card")
             {
+                String nJugadoresPane = JOptionPane.showInputDialog("Ingrese la Cantidad de Jugadores 2-7");
+                int nJugadores = Integer.parseInt(nJugadoresPane);
+                if(nJugadores <= 7 && nJugadores >= 2)
+                {
+                    FiveCardDraw juego = new FiveCardDraw(apuesta, nJugadores,dinero); 
+                } else {
+                    JOptionPane.showMessageDialog(null, "Revise las Entradas", "Poker", JOptionPane.ERROR_MESSAGE);  
+                }
 
             } else {
 
