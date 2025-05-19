@@ -4,6 +4,8 @@ import javax.swing.JButton;
 
 import java.awt.Image;
 import java.awt.event.*;
+import java.io.FileWriter;
+import java.io.IOException;
 
 
 public class Carta extends JButton implements Comparable<Carta> {
@@ -104,7 +106,7 @@ public class Carta extends JButton implements Comparable<Carta> {
         {
             return ("["+categoria+"|"+palo+"]");
         } else {
-            return ("[####]");
+            return ("*["+categoria+"|"+palo+"]");
         }
     }
 
@@ -150,5 +152,7 @@ public class Carta extends JButton implements Comparable<Carta> {
         }
     }
 
+
+    
 
 }

@@ -1,4 +1,5 @@
 import java.awt.Font;
+import java.io.File;
 
 import javax.swing.*;
 
@@ -62,6 +63,28 @@ public class main {
             {
 
             } else {
+
+                iniciarSevenStud(apuesta, dinero);
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Revise las Entradas", "Poker", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+
+
+
+
+    public static void iniciarSevenStud(int apuesta, int dinero)
+    {
+        File archive = new File("C:\\Users\\jhare\\OneDrive\\Escritorio\\hsahdgfhgaw\\partida7Stud.txt");
+        if(archive.exists())
+        {
+            int opcion = JOptionPane.showConfirmDialog(null,"Ya existe una partida, quieres Cargarla?","Poker",JOptionPane.YES_NO_OPTION);
+
+            if(opcion == JOptionPane.NO_OPTION)
+            {
+                archive.delete();
                 String nJugadoresPane = JOptionPane.showInputDialog("Ingrese la Cantidad de Jugadores 2-8");
                 int nJugadores = Integer.parseInt(nJugadoresPane);
                 if(nJugadores <= 8 && nJugadores >= 2)
@@ -70,9 +93,20 @@ public class main {
                 } else {
                     JOptionPane.showMessageDialog(null, "Revise las Entradas", "Poker", JOptionPane.ERROR_MESSAGE);  
                 }
+            }  else {
+                SevenStud juego = new SevenStud(0,0,0);
             }
+
         } else {
-            JOptionPane.showMessageDialog(null, "Revise las Entradas", "Poker", JOptionPane.ERROR_MESSAGE);
+
+                String nJugadoresPane = JOptionPane.showInputDialog("Ingrese la Cantidad de Jugadores 2-8");
+                int nJugadores = Integer.parseInt(nJugadoresPane);
+                if(nJugadores <= 8 && nJugadores >= 2)
+                {
+                    SevenStud juego = new SevenStud(apuesta, nJugadores,dinero); 
+                } else {
+                    JOptionPane.showMessageDialog(null, "Revise las Entradas", "Poker", JOptionPane.ERROR_MESSAGE);  
+                }
         }
     }
 

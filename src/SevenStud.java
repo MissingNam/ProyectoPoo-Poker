@@ -1,7 +1,14 @@
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Scanner;
 import java.util.Set;
 
 import javax.swing.*;
@@ -21,6 +28,7 @@ public class SevenStud extends PokerPadre
     private JLabel dineroAcumulado = new JLabel();
     private JLabel apuestaActual = new JLabel();
     private JLabel jugadorTurno = new JLabel();
+    private JButton botonGuardar = new JButton("Guardar");
 
     // cosas donde se guarda informacion importante
     private int dineroBanca = 0;
@@ -33,32 +41,38 @@ public class SevenStud extends PokerPadre
     public SevenStud(int apuestaInicial, int numJugadores,int dineroInicial)
     {
         super(apuestaInicial,numJugadores,dineroInicial);
-        // darle las cartas a los jugadores al inicio del juego
-        mazo.shuffle();
-        Set<Integer> llaves = jugadores.keySet();
-        for(Integer b : llaves)
+        File archivo = new File("C:\\Users\\jhare\\OneDrive\\Escritorio\\hsahdgfhgaw\\partida7Stud.txt");
+        if(archivo.exists())
         {
-            Jugador a = jugadores.get(b);
-            a.setDinero(a.getDinero()-apuesta);
-            dineroBanca += apuesta;
-            a.añadirCarta(mazo.darCarta());
-            a.añadirCarta(mazo.darCarta());
-            a.añadirCarta(mazo.darCarta());
-            a.getCartaI(2).voltear();
-            // darle la chance a la carta 0 y 1 de voltearse
-            Carta self = a.getCartaI(0);
-            self.addActionListener(s -> self.voltear());
-            Carta self2 = a.getCartaI(1);
-            self2.addActionListener(s -> self2.voltear());
-        }
+            cargarPartida();
+        } else {
+            // darle las cartas a los jugadores al inicio del juego
+            mazo.shuffle();
+            Set<Integer> llaves = jugadores.keySet();
+            for(Integer b : llaves)
+            {
+                Jugador a = jugadores.get(b);
+                a.setDinero(a.getDinero()-apuesta);
+                dineroBanca += apuesta;
+                a.añadirCarta(mazo.darCarta());
+                a.añadirCarta(mazo.darCarta());
+                a.añadirCarta(mazo.darCarta());
+                a.getCartaI(2).voltear();
+                // darle la chance a la carta 0 y 1 de voltearse
+                Carta self = a.getCartaI(0);
+                self.addActionListener(s -> self.voltear());
+                Carta self2 = a.getCartaI(1);
+                self2.addActionListener(s -> self2.voltear());
+            }
 
-        for(int i = 0; i<jugadores.get(0).manoSize(); i++)
-        {
-            System.out.println(jugadores.get(0).getCartaI(i));
-        }
+            for(int i = 0; i<jugadores.get(0).manoSize(); i++)
+            {
+                System.out.println(jugadores.get(0).getCartaI(i));
+            }
 
-        crearGrafico();
-        thirdStreet();
+            crearGrafico();
+            thirdStreet();
+        }
     }
 
 
@@ -313,6 +327,9 @@ public class SevenStud extends PokerPadre
         mazo.getCartaI(0).setBounds(75,250,CARDLENGHT,CARDHEIGHT);
         panelInfo.add(mazo.getCartaI(0));
 
+       
+        botonGuardar.setBounds(10,165,100,25);
+        botonGuardar.addActionListener(a -> guardarPartida());
         rondaActual.setFont(new Font("Agency FB",Font.BOLD,48));
         rondaActual.setForeground(Color.WHITE);
         rondaActual.setBounds(10,0,250,100);
@@ -325,6 +342,7 @@ public class SevenStud extends PokerPadre
         panelInfo.add(dineroJugadorActual);
         panelInfo.add(rondaActual);
         panelInfo.add(jugadorTurno);
+        panelInfo.add(botonGuardar);
 
         
         //Panel de Juego
@@ -588,7 +606,159 @@ public class SevenStud extends PokerPadre
             }
         }
     }
+
+
+    public void guardarPartida()
+    {
+        try {
+            FileWriter writer = new FileWriter("C:\\Users\\jhare\\OneDrive\\Escritorio\\hsahdgfhgaw\\partida7Stud.txt");
+            writer.write(Integer.toString(numJugadores)+"\n");
+            writer.write(rondaActual.getText()+"\n");
+            writer.write(apuesta+"\n");
+            writer.write(dineroBanca+"\n");
     
+            for(int i = 0; i<numJugadores; i++)
+            {
+                writer.write(Integer.toString(i)+"\n");
+                writer.write(jugadores.get(i).getDinero()+"\n");
+                for(int j = 0; j < jugadores.get(i).getCartas().size(); j++)
+                {
+                    writer.write(jugadores.get(i).getCartaI(j)+"\n");
+                }
+            }
+            writer.write("mazo \n");
+            for(int i = 0; i<mazo.size(); i++)
+            {
+                writer.write(mazo.getCartaI(i)+"\n");
+            }
+            writer.close();
+
+        } catch (IOException e) {
+            System.out.println("Ocurrió un error al crear el archivo.");
+            e.printStackTrace();
+        }
+    }
+
+    public void cargarPartida()
+    {
+        File archivo = new File("partida7Stud.txt");
+        try (Scanner lector = new Scanner(archivo)) {
+        int numJugadores = Integer.parseInt(lector.nextLine());
+        String nombreRonda = lector.nextLine();
+        int apuestaActual = Integer.parseInt(lector.nextLine());
+        int pozo = Integer.parseInt(lector.nextLine());
+
+        HashMap<Integer, Jugador> jugadores = new HashMap<>();
+
+        // Leer todos los jugadores
+        for (int i = 0; i < numJugadores; i++) {
+            int id = Integer.parseInt(lector.nextLine());
+            int dinero = Integer.parseInt(lector.nextLine());
+
+            Jugador jugador = new Jugador(dinero);
+            int limit = 0;
+            switch(nombreRonda)
+         {
+            case "Third Street":
+                limit = 3;
+                break;
+            case "Fourth Street":
+                limit = 4;
+                break;
+            case "Fifth Street":
+                limit = 5;
+                break;
+            case "Sixth Street":
+                limit = 6;
+                break;
+            case "Seventh Street":
+                limit = 7;
+                break;
+            case "ShowDown":
+                limit = 7;
+                break;
+        }
+
+            for (int j = 0; j < limit; j++) {
+                if (!lector.hasNextLine()) break;
+                String lineaCarta = lector.nextLine();
+                Carta carta = parsearCarta(lineaCarta);
+                jugador.añadirCarta(carta);
+            }
+            jugadores.put(id, jugador);
+        }
+
+        // Leer "mazo"
+        if (lector.hasNextLine() && lector.nextLine().equalsIgnoreCase("mazo")) {
+    
+            while (lector.hasNextLine()) {
+                String cartaStr = lector.nextLine();
+                Carta carta = parsearCarta(cartaStr);
+                mazo.añadirAMazo(carta);
+            }
+        }
+
+        // Guardar info del juego
+        this.numJugadores = numJugadores;
+        this.apuesta = apuestaActual;
+        this.dineroBanca = pozo;
+        this.jugadores = jugadores;
+
+        switch(nombreRonda)
+        {
+            case "Third Street":
+                thirdStreet();
+                break;
+            case "Fourth Street":
+                fourthStreet();
+                break;
+            case "Fifth Street":
+                fifthStreet();
+                break;
+            case "Sixth Street":
+                sixthStreet();
+                break;
+            case "Seventh Street":
+                sevenStreth();
+                break;
+            case "ShowDown":
+                showdown();
+                break;
+        }
+
+        crearGrafico();
+
+        System.out.println("Partida cargada con éxito.");
+    } catch (Exception e) {
+        System.out.println("Error al cargar la partida:");
+        e.printStackTrace();
+    }
+    }
+
+
+    private Carta parsearCarta(String texto) {
+            boolean revelada = true;
+
+            if (texto.startsWith("*")) {
+                texto = texto.substring(1);
+            } else {
+                revelada = false;
+            }
+
+            texto = texto.replace("[", "");
+            texto = texto.replace("]", "");
+            String[] partes = texto.split("\\|");
+            int valor = Integer.parseInt(partes[0]);
+            String palo = partes[1];
+
+            Carta carta = new Carta(valor, palo);
+            if (!revelada) {
+                carta.voltear();
+            }
+
+            return carta;
+        }
+
 
 
 }

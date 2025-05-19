@@ -92,5 +92,15 @@ public class Mazo {
         }
     }
 
+    public void añadirAMazo(Carta carta)
+    {
+        cartas.add(carta);
+    }
+
+    public int size()
+    {
+        return cartas.size();
+    }
+
 
 }
