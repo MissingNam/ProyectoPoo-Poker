@@ -12,6 +12,8 @@ import java.util.Scanner;
 import java.util.Set;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 
 
@@ -130,8 +132,18 @@ public class SevenStud extends PokerPadre
             igualar.addActionListener(a -> {
                 if(jugadores.get(jugadorActual).getDinero() > apuesta)
                 {
-                    jugadores.get(jugadorActual).setDinero(jugadores.get(jugadorActual).getDinero() - apuesta);
-                    dineroBanca += apuesta;
+                    int apostado = jugadores.get(jugadorActual).getDineroApostado();
+                    int dineroJugador = jugadores.get(jugadorActual).getDinero();
+                    if(jugadores.get(jugadorActual).getDineroApostado() != 0)
+                    {
+                        jugadores.get(jugadorActual).setDinero(dineroJugador - (apuesta - apostado));
+                        dineroBanca += apuesta;
+                        jugadores.get(jugadorActual).setDineroApostado(apostado + apuesta);                    
+                    } else {
+                        jugadores.get(jugadorActual).setDinero(dineroJugador - apuesta);
+                        dineroBanca += apuesta;
+                        jugadores.get(jugadorActual).setDineroApostado(apostado + (apuesta - apostado));
+                    }
                     jugadores.get(jugadorActual).cambioAlcanzoApuesta();
                     jugadorActual ++;
                     nextJugador();
@@ -152,12 +164,25 @@ public class SevenStud extends PokerPadre
             aumentar.addActionListener(a -> {
                 //crear el slider para el JOptionPane
                 int aumento;
-                JSlider slider = new JSlider(1,jugadores.get(jugadorActual).getDinero(),1);
+                JPanel panel = new JPanel();
+                panel.setLayout(new BoxLayout(panel,BoxLayout.Y_AXIS));
+                JSlider slider = new JSlider(1,jugadores.get(jugadorActual).getDinero()/2,1);
+                JLabel label = new JLabel("Aumento: "+slider.getValue());
+                // esto lo encontre en reddit
+                slider.addChangeListener(new ChangeListener() {
+                    @Override
+                    public void stateChanged(ChangeEvent e)
+                    {
+                        label.setText("Aumento: "+slider.getValue());
+                    }
+                });
+                panel.add(label);
+                panel.add(slider);
                 slider.setMajorTickSpacing(10);
                 slider.setPaintTicks(true);
                 slider.setPaintTrack(true);
                 // obtener el valor del slider 
-                int opcion = JOptionPane.showConfirmDialog(null, slider,"Seleccione un valor",JOptionPane.OK_CANCEL_OPTION,JOptionPane.QUESTION_MESSAGE);
+                int opcion = JOptionPane.showConfirmDialog(null, panel,"Seleccione un valor",JOptionPane.OK_OPTION,JOptionPane.QUESTION_MESSAGE);
                 if(opcion == JOptionPane.OK_OPTION)
                 {
                     aumento = slider.getValue();
@@ -169,6 +194,7 @@ public class SevenStud extends PokerPadre
                 // aumentar el valor a la apuesta
                 apuesta = apuesta+aumento;
                 jugadores.get(jugadorActual).setDinero(jugadores.get(jugadorActual).getDinero()-apuesta);
+                dineroBanca = dineroBanca + apuesta;
                 Set<Integer> llaves = jugadores.keySet();
                 llaves.stream().forEach(i -> jugadores.get(i).desIgualarApuesta());
                 //jugadores.stream().forEach(jug -> jug.desIgualarApuesta()); 
@@ -243,6 +269,7 @@ public class SevenStud extends PokerPadre
         for(int i = 0; i< numJugadores; i++)
         {
             if(jugadores.get(i).seRindio() == true){rendidos ++;}
+            jugadores.get(i).setDineroApostado(0);
         }
         if(rendidos == numJugadores-1)
         {
