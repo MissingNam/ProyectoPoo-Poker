@@ -77,7 +77,7 @@ public class main {
 
     public static void iniciarSevenStud(int apuesta, int dinero)
     {
-        File archive = new File("C:\\Users\\jhare\\OneDrive\\Escritorio\\hsahdgfhgaw\\partida7Stud.txt");
+        File archive = new File("C:\\Games\\partida7Stud.txt");
         if(archive.exists())
         {
             int opcion = JOptionPane.showConfirmDialog(null,"Ya existe una partida, quieres Cargarla?","Poker",JOptionPane.YES_NO_OPTION);

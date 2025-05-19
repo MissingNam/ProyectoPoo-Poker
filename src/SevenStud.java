@@ -41,7 +41,7 @@ public class SevenStud extends PokerPadre
     public SevenStud(int apuestaInicial, int numJugadores,int dineroInicial)
     {
         super(apuestaInicial,numJugadores,dineroInicial);
-        File archivo = new File("C:\\Users\\jhare\\OneDrive\\Escritorio\\hsahdgfhgaw\\partida7Stud.txt");
+        File archivo = new File("C:\\Games\\partida7Stud.txt");
         if(archivo.exists())
         {
             cargarPartida();
@@ -115,6 +115,7 @@ public class SevenStud extends PokerPadre
                     jugadores.get(jugadorActual).cambioAlcanzoApuesta();
                     jugadorActual++;
                     nextJugador();
+                    botonGuardar.setEnabled(false);
                     rondaApuestas();
                     
                 });
@@ -134,6 +135,7 @@ public class SevenStud extends PokerPadre
                     jugadores.get(jugadorActual).cambioAlcanzoApuesta();
                     jugadorActual ++;
                     nextJugador();
+                    botonGuardar.setEnabled(false);
                     actualizarLabels();
                     rondaApuestas();
                 } else {
@@ -173,6 +175,7 @@ public class SevenStud extends PokerPadre
                 jugadores.get(jugadorActual).igualoApuesta();
                 jugadorActual++;
                 nextJugador();
+                botonGuardar.setEnabled(false);
                 actualizarLabels();
                 rondaApuestas();
             });
@@ -186,6 +189,7 @@ public class SevenStud extends PokerPadre
                 jugadores.get(jugadorActual).cambioRendido();
                 jugadorActual++;
                 nextJugador();
+                botonGuardar.setEnabled(false);
                 rondaApuestas();
             });
 
@@ -365,6 +369,7 @@ public class SevenStud extends PokerPadre
     // calles, estas casi no hacen nada, solo llaman a ronda repartir y a ronda apuestas, segun lo necesario
     public void thirdStreet()
     {
+        botonGuardar.setEnabled(true);
         rondaActual.setText("Third Street");
         ponerAlPeorAlInicio();
         rondaApuestas();
@@ -372,6 +377,7 @@ public class SevenStud extends PokerPadre
 
     public void fourthStreet()
     {
+        botonGuardar.setEnabled(true);
         rondaActual.setText("Fourth Street");
         rondaRepartir(1,true);
         // aqui añadir el organizar a los jugadores
@@ -385,6 +391,7 @@ public class SevenStud extends PokerPadre
 
     public void fifthStreet()
     {
+        botonGuardar.setEnabled(true);
         rondaActual.setText("Fifth Street");
         actualizarLabels();
 
@@ -400,6 +407,7 @@ public class SevenStud extends PokerPadre
 
     public void sixthStreet()
     {
+        botonGuardar.setEnabled(true);
         rondaActual.setText("Sixth Street");
         actualizarLabels();
 
@@ -417,6 +425,7 @@ public class SevenStud extends PokerPadre
     //tralaleor tralala
     public void sevenStreth()
     {
+        botonGuardar.setEnabled(true);
         rondaActual.setText("Seventh Street");
         rondaRepartir(1,false);
         Set<Integer> llaves = jugadores.keySet();
@@ -611,7 +620,7 @@ public class SevenStud extends PokerPadre
     public void guardarPartida()
     {
         try {
-            FileWriter writer = new FileWriter("C:\\Users\\jhare\\OneDrive\\Escritorio\\hsahdgfhgaw\\partida7Stud.txt");
+            FileWriter writer = new FileWriter("C:\\Games\\partida7Stud.txt");
             writer.write(Integer.toString(numJugadores)+"\n");
             writer.write(rondaActual.getText()+"\n");
             writer.write(apuesta+"\n");
@@ -641,7 +650,7 @@ public class SevenStud extends PokerPadre
 
     public void cargarPartida()
     {
-        File archivo = new File("partida7Stud.txt");
+        File archivo = new File("C:\\Games\\partida7Stud.txt");
         try (Scanner lector = new Scanner(archivo)) {
         int numJugadores = Integer.parseInt(lector.nextLine());
         String nombreRonda = lector.nextLine();
@@ -703,6 +712,18 @@ public class SevenStud extends PokerPadre
         this.apuesta = apuestaActual;
         this.dineroBanca = pozo;
         this.jugadores = jugadores;
+
+        for(int i = 0; i<jugadores.size(); i++)
+        {
+            for(int j = 0; j <jugadores.get(i).manoSize(); j++)
+            {
+                Carta self = jugadores.get(i).getCartaI(j);
+                if(!self.esMirable())
+                {
+                    self.addActionListener(a -> self.voltear());
+                }
+            }
+        }
 
         switch(nombreRonda)
         {
