@@ -15,7 +15,7 @@ public class Mano {
     }
 
     public int cartaAlta(){
-        int puntuacion;
+        int puntuacion = 0;
         Carta cartaAlta= cartas.get(0);
 
         for(int i =1; i<cartas.size();i++){
@@ -26,7 +26,7 @@ public class Mano {
         }
         puntuacion = cartaAlta.getCategoria();
         if(cartaAlta.getCategoria()==1){
-            puntuacion+=13;
+            puntuacion += 13;
         }
         return puntuacion;
     }
@@ -37,7 +37,7 @@ public class Mano {
             Carta cartaA = cartas.get(i);
             for(int j =1; j<cartas.size();j++){
                 Carta cartaB = cartas.get(j);
-                if(cartaA.getCategoria() == cartaB.getCategoria()){
+                if(cartaA.getCategoria() == cartaB.getCategoria() && !cartaA.getPalo().equals( cartaB.getPalo())){
                     puntuacion = cartaA.getCategoria()+cartaB.getCategoria()+100;
                     if(cartaA.getCategoria()==1){
                         puntuacion+=26;
@@ -224,8 +224,8 @@ public class Mano {
         ordenar(cartas);
         boolean esEscaleraReal=true;
         if(buscarEscalera()!=0 && buscarColor() != 0){
-            if(cartas.get(cartas.size()-1).getCategoria()==1){
-                for(int i =0; i<cartas.size()-1;i++){
+            if(cartas.get(cartas.size()-1).getCategoria()==1 && cartas.get(0).getCategoria()==13){
+                for(int i =0; i<cartas.size()-2;i++){
                     Carta cartaA = cartas.get(i);
                     Carta cartaB = cartas.get(i+1);
                     if(cartaA.getCategoria() != (cartaB.getCategoria()+1)){
