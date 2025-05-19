@@ -377,6 +377,15 @@ public class FiveCardDraw extends PokerPadre{
                 pasar.setVisible(true);
                 igualar.setVisible(true);
                 subir.setVisible(true);
+                for(int i = 0; i < numJugadores; i++)
+                {
+                    Jugador aEvaluar = jugadores.get(i);
+                    if(aEvaluar.getDinero() < apuesta)
+                    {
+                        aEvaluar.cambioRendido();
+                    }
+                }
+
 
                 pasarJugador();
             }else{
