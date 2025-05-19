@@ -432,6 +432,7 @@ public class FiveCardDraw extends PokerPadre{
 
     @Override
     public void rondaApuestas(){
+        
     }
 
     public void buscarRendidos(){
@@ -479,25 +480,17 @@ public class FiveCardDraw extends PokerPadre{
 
     @Override
     public void showdown(){
-        Jugador ganador =null;
-        System.out.println("error en showdown");
-        int puntosGanador=0;
-        for(int i=0; i<numJugadores;i++){
-            if(!jugadores.get(i).seRindio()){
-                System.out.println("error mejor jugada");
-                mejorJugada(jugadores.get(i));
-            } 
+        for(int i = 0; i<jugadores.size(); i++)
+        {
+           
+             mejorJugada(jugadores.get(jugadorActual));
+            jugadorActual ++;
+            nextJugador();
         }
-        for(int i=0; i<numJugadores;i++){
-            if(!jugadores.get(i).seRindio()){
-                if(jugadores.get(i).getPuntaje()>puntosGanador){
-                    ganador=jugadores.get(i);
-                }
-            } 
-        }
-        JOptionPane.showMessageDialog(null, "El jugador: "+(jugadorActual+1)+" Es el ganador", 
-                                    "Ganador", JOptionPane.ERROR_MESSAGE); 
-        ventanaDeJuego.dispose();
+
+        JOptionPane.showMessageDialog(null,"El ganador es el jugador "+(jugadorActual+1)+" ", "Ganador", JOptionPane.INFORMATION_MESSAGE);
+
+
 
     }
 }

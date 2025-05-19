@@ -12,6 +12,8 @@ import java.util.Scanner;
 import java.util.Set;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 
 
@@ -128,7 +130,7 @@ public class SevenStud extends PokerPadre
 
             // colocar boton Igualar y su funcionamiento
             igualar.addActionListener(a -> {
-                if(jugadores.get(jugadorActual).getDinero() > apuesta)
+                if(jugadores.get(jugadorActual).getDinero() >= apuesta)
                 {
                     jugadores.get(jugadorActual).setDinero(jugadores.get(jugadorActual).getDinero() - apuesta);
                     dineroBanca += apuesta;
@@ -141,6 +143,11 @@ public class SevenStud extends PokerPadre
                 } else {
                     jugadores.get(jugadorActual).cambioRendido();
                     JOptionPane.showMessageDialog(null, "El Jugador no tiene suficiente dinero", "Poker", JOptionPane.INFORMATION_MESSAGE);
+                    jugadorActual ++;
+                    nextJugador();
+                    botonGuardar.setEnabled(false);
+                    actualizarLabels();
+                    rondaApuestas();
                 }
             });
 
@@ -152,12 +159,27 @@ public class SevenStud extends PokerPadre
             aumentar.addActionListener(a -> {
                 //crear el slider para el JOptionPane
                 int aumento;
-                JSlider slider = new JSlider(1,jugadores.get(jugadorActual).getDinero(),1);
+                JPanel panel = new JPanel();
+                panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+                JSlider slider = new JSlider(1,jugadores.get(jugadorActual).getDinero()/2,1);
+                JLabel label = new JLabel("Aumento: "+slider.getValue());
+
+                // esto es extraño, me lo encontre en reddit
+                slider.addChangeListener(new ChangeListener(){
+                    @Override
+                    public void stateChanged(ChangeEvent e)
+                    {
+                        label.setText("Aumento: "+slider.getValue());
+                    }
+                });
+                panel.add(slider);
+                panel.add(label);
+
                 slider.setMajorTickSpacing(10);
                 slider.setPaintTicks(true);
                 slider.setPaintTrack(true);
                 // obtener el valor del slider 
-                int opcion = JOptionPane.showConfirmDialog(null, slider,"Seleccione un valor",JOptionPane.OK_CANCEL_OPTION,JOptionPane.QUESTION_MESSAGE);
+                int opcion = JOptionPane.showConfirmDialog(null, panel,"Seleccione un valor",JOptionPane.OK_OPTION,JOptionPane.QUESTION_MESSAGE);
                 if(opcion == JOptionPane.OK_OPTION)
                 {
                     aumento = slider.getValue();
@@ -246,7 +268,12 @@ public class SevenStud extends PokerPadre
         }
         if(rendidos == numJugadores-1)
         {
-            showdown();
+            JOptionPane.showMessageDialog(null, "EL Jugador "+(jugadorActual+1)+" Gana!!","Poker",JOptionPane.INFORMATION_MESSAGE);
+            apuesta = 1;
+            Jugador ganador = jugadores.get(jugadorActual);
+            ganador.setDinero(dineroBanca+ganador.getDinero());
+
+            reiniciarJuego();
         }
 
 
@@ -283,7 +310,6 @@ public class SevenStud extends PokerPadre
                 {
                     if(jugadores.get(jugadorActual).getCartaI(i).esMirable())
                     {
-                        
                         activas ++;
                     }
                 }
@@ -301,6 +327,8 @@ public class SevenStud extends PokerPadre
 
             });
             panelJuego.add(ofrecer);
+            panelJuego.setVisible(false);
+            panelJuego.setVisible(true);
         } else {
 
 
@@ -537,15 +565,6 @@ public class SevenStud extends PokerPadre
         }
 
         jugadorActual = index;
-        /*  usado para debug
-        for(int i = 0; i<numJugadores; i++)
-        {
-            System.out.println("Id"+jugadores.get(i).getJugadaId());
-            System.out.println("Puntos"+jugadores.get(i).getPuntaje());
-            
-        }
-        System.out.println("#############");
-        */
         actualizarPanelJuego();
         actualizarLabels();
     }

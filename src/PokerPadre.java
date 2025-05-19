@@ -13,6 +13,7 @@ public abstract class PokerPadre {
     protected int apuesta;
     protected int numJugadores;
     protected Mazo mazo = new Mazo();
+    protected int jugadorActual = 0;
 
     public PokerPadre(int apuestaInicial, int numJugadores,int dineroInicial)
     {
@@ -149,6 +150,14 @@ public abstract class PokerPadre {
             */
         
 
+    }
+
+    public void nextJugador()
+    {
+        if(jugadorActual >= numJugadores)
+        {
+            jugadorActual = 0;
+        }
     }
 
     
