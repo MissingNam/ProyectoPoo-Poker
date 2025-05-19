@@ -8,7 +8,7 @@ public class main {
     private static JFrame frame = new JFrame();
     private static JComboBox<String> modoJuego = new JComboBox<>();
     private static JTextField apuestaInicial = new JTextField("1");
-    private static JTextField dineroInicial = new JTextField("20");
+    private static JTextField dineroInicial = new JTextField("200");
 
     public static void main(String[] args) {
         // grafico de inicio para solicitar todo
@@ -60,7 +60,14 @@ public class main {
         {
             if(modoJuego.getSelectedItem() == "5 Card")
             {
-
+                String nJugadoresPane = JOptionPane.showInputDialog("Ingrese la Cantidad de Jugadores 2-7");
+                int nJugadores = Integer.parseInt(nJugadoresPane);
+                if(nJugadores <= 7 && nJugadores >= 2)
+                {
+                    FiveCardDraw juego = new FiveCardDraw(apuesta, nJugadores,dinero); 
+                } else {
+                    JOptionPane.showMessageDialog(null, "Revise las Entradas", "Poker", JOptionPane.ERROR_MESSAGE);  
+                }
             } else {
                 String nJugadoresPane = JOptionPane.showInputDialog("Ingrese la Cantidad de Jugadores 2-8");
                 int nJugadores = Integer.parseInt(nJugadoresPane);

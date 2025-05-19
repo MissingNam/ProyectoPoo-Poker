@@ -6,6 +6,8 @@ public class Jugador {
     private boolean rendido;
     private boolean alcanzoApuesta;
     private int puntaje;
+    private int jugadaID;
+    private int dineroApostado;
 
     public Jugador(int dineroInicial)
     {
@@ -83,5 +85,41 @@ public class Jugador {
         alcanzoApuesta = false;
     }
 
+    public void setPuntaje(int newPuntaje)
+    {
+        puntaje = newPuntaje;
+    }
 
+    public int getPuntaje()
+    {
+        return puntaje;
+    }
+
+
+    public void setJugadaId(int newId)
+    {
+        jugadaID = newId;
+    }
+
+    public int getJugadaId()
+    {
+        return jugadaID;
+    }
+
+    public void vaciarMano()
+    {
+        mano.clear();
+    }
+
+    public void setDineroApostado(int dineroApostado){
+        this.dineroApostado = dineroApostado;
+    }
+
+    public int getDineroApostado(){
+        return dineroApostado;
+    }
+
+    public void agregarDineroApostado(int dineroApostado){
+        this.dineroApostado+=dineroApostado;
+    }
 }

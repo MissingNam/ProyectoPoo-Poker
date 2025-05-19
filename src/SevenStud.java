@@ -1,6 +1,8 @@
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.ActionListener;
 import java.util.Iterator;
+import java.util.Set;
 
 import javax.swing.*;
 
@@ -12,12 +14,13 @@ public class SevenStud extends PokerPadre
 
     // cosas para lo grafico
     private JFrame frame = new JFrame();
-    private JPanel panelInfo = new JPanel();
-    private JPanel panelJuego = new JPanel();
+    private JImagePanel panelInfo = new JImagePanel("imagenes/Fondos/mesaMadera.jpg");
+    private JImagePanel panelJuego = new JImagePanel("imagenes/Fondos/mesaPoker.jpg");
     private JLabel rondaActual = new JLabel("Third-Street");
     private JLabel dineroJugadorActual = new JLabel();
     private JLabel dineroAcumulado = new JLabel();
     private JLabel apuestaActual = new JLabel();
+    private JLabel jugadorTurno = new JLabel();
 
     // cosas donde se guarda informacion importante
     private int dineroBanca = 0;
@@ -25,20 +28,28 @@ public class SevenStud extends PokerPadre
 
     //banderas, 
     private int primeraVez = 0;
+    private int todosEvaluados = 0;
 
     public SevenStud(int apuestaInicial, int numJugadores,int dineroInicial)
     {
         super(apuestaInicial,numJugadores,dineroInicial);
         // darle las cartas a los jugadores al inicio del juego
         mazo.shuffle();
-        for(Jugador a : jugadores)
+        Set<Integer> llaves = jugadores.keySet();
+        for(Integer b : llaves)
         {
+            Jugador a = jugadores.get(b);
             a.setDinero(a.getDinero()-apuesta);
             dineroBanca += apuesta;
             a.añadirCarta(mazo.darCarta());
             a.añadirCarta(mazo.darCarta());
             a.añadirCarta(mazo.darCarta());
             a.getCartaI(2).voltear();
+            // darle la chance a la carta 0 y 1 de voltearse
+            Carta self = a.getCartaI(0);
+            self.addActionListener(s -> self.voltear());
+            Carta self2 = a.getCartaI(1);
+            self2.addActionListener(s -> self2.voltear());
         }
 
         for(int i = 0; i<jugadores.get(0).manoSize(); i++)
@@ -47,7 +58,6 @@ public class SevenStud extends PokerPadre
         }
 
         crearGrafico();
-
         thirdStreet();
     }
 
@@ -57,17 +67,18 @@ public class SevenStud extends PokerPadre
     {
         int fin = 0;
         // evaluar que no haya terminado la ronda de apuestas
-        for(int i = 0; i<jugadores.size(); i++)
+        for(int i = 0; i<numJugadores; i++)
         {
             if(jugadores.get(i).seRindio() || jugadores.get(i).igualoApuesta())
             {
                 fin++;
             }
         }
+        
 
         // si este if se ejecuta, es porque el jugador no se ha rendido o 
         // algun jugador no ha alcanzado la apuesta
-        if(fin < jugadores.size() && !jugadores.get(jugadorActual).seRindio() && !jugadores.get(jugadorActual).igualoApuesta())
+        if(fin < numJugadores && !jugadores.get(jugadorActual).seRindio() && !jugadores.get(jugadorActual).igualoApuesta())
         {
             JButton igualar = new JButton("Igualar");
             JButton aumentar = new JButton("Aumentar");
@@ -78,7 +89,7 @@ public class SevenStud extends PokerPadre
             actualizarLabels();
             // poner las cosas
         
-            if(rondaActual.getText().equals("Third Street") && jugadorActual == 0 && primeraVez == 0)
+            if(rondaActual.getText().equals("Third Street") && primeraVez == 0)
             {
                 primeraVez = 1;
                 //boton bring-in
@@ -142,7 +153,9 @@ public class SevenStud extends PokerPadre
                 // aumentar el valor a la apuesta
                 apuesta = apuesta+aumento;
                 jugadores.get(jugadorActual).setDinero(jugadores.get(jugadorActual).getDinero()-apuesta);
-                jugadores.stream().forEach(jug -> jug.desIgualarApuesta()); 
+                Set<Integer> llaves = jugadores.keySet();
+                llaves.stream().forEach(i -> jugadores.get(i).desIgualarApuesta());
+                //jugadores.stream().forEach(jug -> jug.desIgualarApuesta()); 
                 jugadores.get(jugadorActual).igualoApuesta();
                 jugadorActual++;
                 nextJugador();
@@ -164,14 +177,32 @@ public class SevenStud extends PokerPadre
 
             panelJuego.add(rendirse);
 
-        } else if(fin >= jugadores.size())
+        } else if(fin >= numJugadores)
         {
             JOptionPane.showMessageDialog(null, "Se acabaron las apuestas", "Poker", JOptionPane.INFORMATION_MESSAGE);
-            jugadores.stream().forEach(a -> a.cambioAlcanzoApuesta());
+            //jugadores.stream().forEach(a -> a.cambioAlcanzoApuesta());
+            Set<Integer> llaves = jugadores.keySet();
+            llaves.stream().forEach(i -> jugadores.get(i).cambioAlcanzoApuesta());
             // si es third street, lo mandamos a fourthStreet una vez se acaban las apuestas
             if(rondaActual.getText().equals("Third Street"))
             {
                 fourthStreet();
+            } else
+            if(rondaActual.getText().equals("Fourth Street"))
+            {
+                fifthStreet();
+            } else
+            if(rondaActual.getText().equals("Fifth Street"))
+            {
+                sixthStreet();
+            } else
+            if(rondaActual.getText().equals("Sixth Street"))
+            {
+                sevenStreth();
+            } else
+            if(rondaActual.getText().equals("Seventh Street"))
+            {
+                showdown();
             }
 
         } else if(jugadores.get(jugadorActual).seRindio()) 
@@ -188,80 +219,123 @@ public class SevenStud extends PokerPadre
             rondaApuestas();
         }
 
-    }
 
-    public void rondaRepartir(int numero,boolean visible)
-    {
-        // recorre todos los jugadores y les da una carta
-        Iterator<Jugador> iterador = jugadores.iterator();
-        while(iterador.hasNext())
+        // terminar el juego si todos se rindieron
+        int rendidos = 0;
+        for(int i = 0; i< numJugadores; i++)
         {
-            Jugador aDar = iterador.next();
-            // evitar darle cartas a los rendidos (temas de optimizacion)
-            if(visible)
-            {
-                for(int i = 0; i<numero; i++)
-                {
-                    Carta añadirCa = mazo.darCarta();
-                    añadirCa.voltear();
-                    aDar.añadirCarta(añadirCa);
-                }
-            } else {
-                for(int i = 0; i<numero; i++)
-                {
-                    Carta añadirCa = mazo.darCarta();
-                    aDar.añadirCarta(añadirCa);
-                } 
-            }
-            
+            if(jugadores.get(i).seRindio() == true){rendidos ++;}
         }
+        if(rendidos == numJugadores-1)
+        {
+            showdown();
+        }
+
+
     }
 
+    // aqui esta todo lo que se va a hacer una vez se alcanze showdown
+    // se dictara al ganador y se reiniciara el juego
     public void showdown()
     {
+        rondaActual.setText("Showdown");
+        actualizarPanelJuego();
+        actualizarLabels();
+
+        if(todosEvaluados < jugadores.size())
+        {
+            JOptionPane.showMessageDialog(null,"Voltee las 5 cartas que desea jugar","Poker",JOptionPane.INFORMATION_MESSAGE);
+            // aqui se empieza a poner los action listener a las cartas
+            for(int i = 0; i<jugadores.get(jugadorActual).getCartas().size();i++)
+            {
+                Carta self = jugadores.get(jugadorActual).getCartaI(i);
+                 // Remover todos los ActionListeners existentes
+                for (ActionListener al : self.getActionListeners()) {
+                    self.removeActionListener(al);
+                }
+                self.addActionListener(a -> self.voltear());
+            }
+
+            // aqui se crea el boton y la lambda que lo controla
+            JButton ofrecer = new JButton("Ofrecer");
+            ofrecer.setBounds(450,75,100,25);
+            ofrecer.addActionListener(b -> {
+                int activas = 0;
+                for(int i = 0; i<jugadores.get(jugadorActual).getCartas().size();i++)
+                {
+                    if(jugadores.get(jugadorActual).getCartaI(i).esMirable())
+                    {
+                        
+                        activas ++;
+                    }
+                }
+
+                if(activas <= 5)
+                {
+                    mejorJugada(jugadores.get(jugadorActual));
+                    jugadorActual ++;
+                    todosEvaluados ++;
+                    nextJugador();
+                    showdown();
+                } else {
+                    showdown();
+                }
+
+            });
+            panelJuego.add(ofrecer);
+        } else {
+
+
+            JOptionPane.showMessageDialog(null, "EL Jugador "+(jugadorActual+1)+" Gana!!","Poker",JOptionPane.INFORMATION_MESSAGE);
+            apuesta = 1;
+            Jugador ganador = jugadores.get(jugadorActual);
+            ganador.setDinero(dineroBanca+ganador.getDinero());
+
+            reiniciarJuego();
+        }
 
     }
-    
-    public Jugador mejorJugada()
-    {
-        Jugador ganador = jugadores.get(0);
-
-        return ganador;
-    }
-
 
     public void crearGrafico()
     {
         // todo lo relacionado al frame y paneles
-        frame.setSize(1000,500);
+        frame.setSize(1250,500);
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(null);
         
-        panelJuego.setBounds(0,0,750,500);
-        panelJuego.setBackground(Color.GREEN);
+        panelJuego.setBounds(0,0,1000,500);
+        //panelJuego.setBackground(Color.GREEN);
         
-        panelInfo.setBounds(750,0,250,500);
-        panelInfo.setBackground(Color.GRAY);
+        panelInfo.setBounds(1000,0,250,500);
+        //panelInfo.setBackground(Color.GRAY);
         panelInfo.setLayout(null);
         mazo.getCartaI(0).setBounds(75,250,CARDLENGHT,CARDHEIGHT);
         panelInfo.add(mazo.getCartaI(0));
 
         rondaActual.setFont(new Font("Agency FB",Font.BOLD,48));
+        rondaActual.setForeground(Color.WHITE);
         rondaActual.setBounds(10,0,250,100);
         dineroJugadorActual.setText("Dinero restante: "+jugadores.get(jugadorActual).getDinero()+"$");
         dineroJugadorActual.setBounds(10,100,250,100);
+        dineroJugadorActual.setForeground(Color.WHITE);
+        jugadorTurno.setText("Jugador Actual: "+(jugadorActual+1));
+        jugadorTurno.setBounds(10,150,250,100);
+        jugadorTurno.setForeground(Color.WHITE);
         panelInfo.add(dineroJugadorActual);
         panelInfo.add(rondaActual);
+        panelInfo.add(jugadorTurno);
 
-
+        
         //Panel de Juego
         panelJuego.setLayout(null);
         dineroAcumulado.setText("Banca: "+ dineroBanca + " $");
         dineroAcumulado.setFont(new Font("Agency FB",Font.BOLD,48));
-        dineroAcumulado.setBounds(200,0,250,100);
+        dineroAcumulado.setBounds(600,50,250,100);
+        dineroAcumulado.setForeground(Color.WHITE);
         apuestaActual.setText("Apuesta Actual: "+apuesta+" $");
         apuestaActual.setBounds(200,100,250,25);
+        apuestaActual.setForeground(Color.WHITE);
         panelJuego.add(dineroAcumulado);
         panelJuego.add(apuestaActual);
 
@@ -283,6 +357,57 @@ public class SevenStud extends PokerPadre
         rondaActual.setText("Fourth Street");
         rondaRepartir(1,true);
         // aqui añadir el organizar a los jugadores
+        for(int i = 0; i<numJugadores;i++)
+        {
+            super.mejorJugada(jugadores.get(i));
+        }
+        empezarConMejor();
+        rondaApuestas();
+    }
+
+    public void fifthStreet()
+    {
+        rondaActual.setText("Fifth Street");
+        actualizarLabels();
+
+        rondaRepartir(1,true);
+        for(int i = 0; i<numJugadores;i++)
+        {
+            super.mejorJugada(jugadores.get(i));
+            
+        }
+        empezarConMejor();
+        rondaApuestas();
+    }
+
+    public void sixthStreet()
+    {
+        rondaActual.setText("Sixth Street");
+        actualizarLabels();
+
+        rondaRepartir(1,true);
+        for(int i = 0; i<numJugadores;i++)
+        {
+            
+            super.mejorJugada(jugadores.get(i));
+            
+        }
+        empezarConMejor();
+        rondaApuestas();
+    }
+
+    //tralaleor tralala
+    public void sevenStreth()
+    {
+        rondaActual.setText("Seventh Street");
+        rondaRepartir(1,false);
+        Set<Integer> llaves = jugadores.keySet();
+        for(Integer index : llaves)
+        {
+            
+            Jugador jugador = jugadores.get(index);
+            jugador.getCartaI(6).addActionListener(b -> jugador.getCartaI(6).voltear());
+        }
         rondaApuestas();
     }
 
@@ -291,6 +416,8 @@ public class SevenStud extends PokerPadre
     public void actualizarPanelJuego()
     {
         panelJuego.removeAll();
+        panelJuego.setVisible(false);
+        panelJuego.setVisible(true);
 
         panelJuego.add(dineroAcumulado);
         panelJuego.add(apuestaActual);
@@ -310,77 +437,158 @@ public class SevenStud extends PokerPadre
         dineroJugadorActual.setText("Dinero restante: "+jugadores.get(jugadorActual).getDinero()+"$");
         dineroAcumulado.setText("Banca: "+dineroBanca+" $");
         apuestaActual.setText("Apuesta Actual: "+apuesta+" $");
+        jugadorTurno.setText("Jugador Actual: "+(jugadorActual+1));
         frame.setVisible(true);
 
     }
 
     public void ponerAlPeorAlInicio()
     {
-        Iterator<Jugador> iterador = jugadores.iterator();
-        Carta menor = iterador.next().getCartaI(2);
+        Set<Integer> llaves = jugadores.keySet();
+        Iterator<Integer> iterador = llaves.iterator();
+        Carta menor = jugadores.get(iterador.next()).getCartaI(2);
         int indexPeor = 0;
         int repeticiones = -1;
         while(iterador.hasNext())
         {
             repeticiones ++;
-            Jugador evaluar = iterador.next();
-            if(menor.getCategoria() > evaluar.getCartaI(2).getCategoria())
-            {
-                menor = evaluar.getCartaI(2);
-                indexPeor = repeticiones;
-            } else if(menor.getCategoria() == evaluar.getCartaI(2).getCategoria()){
-                // Trebol > Diamente > Corazon > Pica
-                int a;
-                int b;
-                if(menor.getPalo() == "Trebol")
-                {
-                    a = 4;
-                } else if(menor.getPalo() == "Diamante")
-                {
-                    a = 3;
-                } else if(menor.getPalo() == "Corazon")
-                {
-                    a = 2;
-                } else {
-                    a = 1;
-                } 
-
-                if(evaluar.getCartaI(2).getPalo() == "Trebol")
-                {
-                    b = 4;
-                } else if(evaluar.getCartaI(2).getPalo() == "Diamante")
-                {
-                    b = 3;
-                } else if(evaluar.getCartaI(2).getPalo() == "Corazon")
-                {
-                    b = 2;
-                } else {
-                    b = 1;
-                } 
-
-                if(b < a)
+            Jugador evaluar = jugadores.get(iterador.next());
+            int comparacion = menor.compareTo(evaluar.getCartaI(2));
+                if(comparacion == 0)
                 {
                     menor = evaluar.getCartaI(2);
                     indexPeor = repeticiones;
                 }
-
-
-            }
         }
         // colocar al inicio del arrayLits
-        Jugador peor = jugadores.remove(indexPeor);
-        jugadores.add(0,peor);
-
+        jugadorActual = indexPeor;
+        actualizarPanelJuego();
+        actualizarLabels();
 
     }
 
 
     public void nextJugador()
     {
-        if(jugadorActual >= jugadores.size())
+        if(jugadorActual >= numJugadores)
         {
             jugadorActual = 0;
         }
     }
+
+    public void empezarConMejor()
+    {
+        for(int i = 0; i< numJugadores; i++)
+        {
+            super.mejorJugada(jugadores.get(i));
+        }
+
+
+        int index = 0;
+        Jugador jugador1 = jugadores.get(0);
+        while(jugador1.seRindio() == true)
+        {
+            index ++;
+            jugador1 = jugadores.get(index);
+        }
+
+        for(int i = 0; i<numJugadores; i++)
+        {
+            Jugador jugador2 = jugadores.get(i);
+            if(jugador2.getJugadaId() > jugador1.getJugadaId())
+            {
+                jugador1 = jugador2;
+                index = i;
+            } else if(jugador2.getJugadaId() == jugador1.getJugadaId())
+            {
+                if(jugador2.getPuntaje() > jugador1.getPuntaje())
+                {
+                    jugador1 = jugador2;
+                    index = i;
+                }
+
+            }
+        }
+
+        jugadorActual = index;
+        /*  usado para debug
+        for(int i = 0; i<numJugadores; i++)
+        {
+            System.out.println("Id"+jugadores.get(i).getJugadaId());
+            System.out.println("Puntos"+jugadores.get(i).getPuntaje());
+            
+        }
+        System.out.println("#############");
+        */
+        actualizarPanelJuego();
+        actualizarLabels();
+    }
+
+
+    public void reiniciarJuego()
+    {
+        actualizarLabels();
+        actualizarPanelJuego();
+        mazo.vaciar();
+        mazo.llenarMazo();
+        mazo.shuffle();
+        
+        int rotos = 0;
+        primeraVez = 0;
+        dineroBanca = 0;
+        for(int i = 0; i<numJugadores; i++)
+        {
+            jugadores.get(i).vaciarMano();
+            if(jugadores.get(i).seRindio() == true){ jugadores.get(i).cambioRendido();}
+            if(jugadores.get(i).igualoApuesta() == true){jugadores.get(i).cambioAlcanzoApuesta();}
+
+            if(jugadores.get(i).getDinero() < apuesta)
+            {
+                rotos ++;
+                jugadores.get(i).cambioRendido();
+            }
+        }
+
+        Set<Integer> llaves = jugadores.keySet();
+        for(Integer b : llaves)
+        {
+            Jugador a = jugadores.get(b);
+            a.setDinero(a.getDinero()-apuesta);
+            dineroBanca += apuesta;
+            a.añadirCarta(mazo.darCarta());
+            a.añadirCarta(mazo.darCarta());
+            a.añadirCarta(mazo.darCarta());
+            a.getCartaI(2).voltear();
+            // darle la chance a la carta 0 y 1 de voltearse
+            Carta self = a.getCartaI(0);
+            self.addActionListener(s -> self.voltear());
+            Carta self2 = a.getCartaI(1);
+            self2.addActionListener(s -> self2.voltear());
+        }
+
+
+        actualizarPanelJuego();
+        if(rotos >= numJugadores-1)
+        {
+            JOptionPane.showMessageDialog(null, "EL Jugador "+(jugadorActual+1)+" Gana la Final!!","Poker",JOptionPane.INFORMATION_MESSAGE);
+            frame.dispose();
+        } else {
+            thirdStreet();
+        }
+        
+    }
+
+    public void cambiarActivacionCartasVisibles(Jugador jugador)
+    {
+        for(int j = 0; j<jugador.getCartas().size(); j++)
+        {
+            if(jugador.getCartaI(j).esMirable())
+            {
+                jugador.getCartaI(j).cambioActivacion();
+            }
+        }
+    }
+    
+
 
 }
