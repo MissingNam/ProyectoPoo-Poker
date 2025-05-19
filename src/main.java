@@ -14,6 +14,8 @@ public class main {
     public static void main(String[] args) {
         // grafico de inicio para solicitar todo
 
+        ImageIcon fondoInicio=new ImageIcon("imagenes\\Fondos\\mesaPoker.jpg");
+        JLabel fondo = new JLabel();
         
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
@@ -69,7 +71,6 @@ public class main {
                 } else {
                     JOptionPane.showMessageDialog(null, "Revise las Entradas", "Poker", JOptionPane.ERROR_MESSAGE);  
                 }
-
             } else {
 
                 iniciarSevenStud(apuesta, dinero);

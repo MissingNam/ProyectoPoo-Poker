@@ -1,4 +1,7 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin/DeltaFiveCardDraw
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -51,6 +54,7 @@ public class Prueba {
     }
     
 }
+<<<<<<< HEAD
 =======
 import java.util.ArrayList;
 import java.util.Collections;
@@ -102,3 +106,5 @@ public class Prueba {
     
 }
 >>>>>>> origin/beta_FiveCardDraw
+=======
+>>>>>>> origin/DeltaFiveCardDraw

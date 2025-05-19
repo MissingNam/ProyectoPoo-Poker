@@ -9,6 +9,7 @@ public class Mazo {
         String[] palos = new String[4];
         palos[0] = "Diamante";
         palos[1] = "Pica";
+        palos[1] = "Pica";
         palos[2] = "Corazon";
         palos[3] = "Trebol";
 
@@ -39,6 +40,10 @@ public class Mazo {
         for(int i = 0; i<n ; i++)
         {
             cartasRetorno.add(cartas.remove(0));
+            if(this.size()==0){
+                this.llenarMazo();
+                this.shuffle();
+            }
         }
 
         return cartasRetorno;

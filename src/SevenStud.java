@@ -217,9 +217,9 @@ public class SevenStud extends PokerPadre
 
             panelJuego.add(rendirse);
 
-        } else if(fin >= numJugadores)
-        {
-            JOptionPane.showMessageDialog(null, "Se acabaron las apuestas", "Poker", JOptionPane.INFORMATION_MESSAGE);
+<<<<<<< HEAD
+=======
+            Image bringInFondoImagen = fondoBotonOriginal.getImage().getScaledInstance(
             //jugadores.stream().forEach(a -> a.cambioAlcanzoApuesta());
             Set<Integer> llaves = jugadores.keySet();
             llaves.stream().forEach(i -> jugadores.get(i).cambioAlcanzoApuesta());
@@ -268,6 +268,7 @@ public class SevenStud extends PokerPadre
         }
         if(rendidos == numJugadores-1)
         {
+<<<<<<< HEAD
             JOptionPane.showMessageDialog(null, "EL Jugador "+(jugadorActual+1)+" Gana!!","Poker",JOptionPane.INFORMATION_MESSAGE);
             apuesta = 1;
             Jugador ganador = jugadores.get(jugadorActual);
@@ -276,6 +277,12 @@ public class SevenStud extends PokerPadre
             reiniciarJuego();
         }
 
+=======
+            showdown();
+        }
+
+        
+>>>>>>> origin/DeltaFiveCardDraw
 
     }
 
@@ -327,8 +334,11 @@ public class SevenStud extends PokerPadre
 
             });
             panelJuego.add(ofrecer);
+<<<<<<< HEAD
             panelJuego.setVisible(false);
             panelJuego.setVisible(true);
+=======
+>>>>>>> origin/DeltaFiveCardDraw
         } else {
 
 
@@ -359,9 +369,12 @@ public class SevenStud extends PokerPadre
         mazo.getCartaI(0).setBounds(75,250,CARDLENGHT,CARDHEIGHT);
         panelInfo.add(mazo.getCartaI(0));
 
+<<<<<<< HEAD
        
         botonGuardar.setBounds(10,165,100,25);
         botonGuardar.addActionListener(a -> guardarPartida());
+=======
+>>>>>>> origin/DeltaFiveCardDraw
         rondaActual.setFont(new Font("Agency FB",Font.BOLD,48));
         rondaActual.setForeground(Color.WHITE);
         rondaActual.setBounds(10,0,250,100);
@@ -374,7 +387,10 @@ public class SevenStud extends PokerPadre
         panelInfo.add(dineroJugadorActual);
         panelInfo.add(rondaActual);
         panelInfo.add(jugadorTurno);
+<<<<<<< HEAD
         panelInfo.add(botonGuardar);
+=======
+>>>>>>> origin/DeltaFiveCardDraw
 
         
         //Panel de Juego
@@ -397,7 +413,10 @@ public class SevenStud extends PokerPadre
     // calles, estas casi no hacen nada, solo llaman a ronda repartir y a ronda apuestas, segun lo necesario
     public void thirdStreet()
     {
+<<<<<<< HEAD
         botonGuardar.setEnabled(true);
+=======
+>>>>>>> origin/DeltaFiveCardDraw
         rondaActual.setText("Third Street");
         ponerAlPeorAlInicio();
         rondaApuestas();
@@ -405,7 +424,10 @@ public class SevenStud extends PokerPadre
 
     public void fourthStreet()
     {
+<<<<<<< HEAD
         botonGuardar.setEnabled(true);
+=======
+>>>>>>> origin/DeltaFiveCardDraw
         rondaActual.setText("Fourth Street");
         rondaRepartir(1,true);
         // aqui añadir el organizar a los jugadores
@@ -419,7 +441,10 @@ public class SevenStud extends PokerPadre
 
     public void fifthStreet()
     {
+<<<<<<< HEAD
         botonGuardar.setEnabled(true);
+=======
+>>>>>>> origin/DeltaFiveCardDraw
         rondaActual.setText("Fifth Street");
         actualizarLabels();
 
@@ -435,7 +460,10 @@ public class SevenStud extends PokerPadre
 
     public void sixthStreet()
     {
+<<<<<<< HEAD
         botonGuardar.setEnabled(true);
+=======
+>>>>>>> origin/DeltaFiveCardDraw
         rondaActual.setText("Sixth Street");
         actualizarLabels();
 
@@ -453,7 +481,10 @@ public class SevenStud extends PokerPadre
     //tralaleor tralala
     public void sevenStreth()
     {
+<<<<<<< HEAD
         botonGuardar.setEnabled(true);
+=======
+>>>>>>> origin/DeltaFiveCardDraw
         rondaActual.setText("Seventh Street");
         rondaRepartir(1,false);
         Set<Integer> llaves = jugadores.keySet();
@@ -503,6 +534,7 @@ public class SevenStud extends PokerPadre
         Iterator<Integer> iterador = llaves.iterator();
         Carta menor = jugadores.get(iterador.next()).getCartaI(2);
         int indexPeor = 0;
+<<<<<<< HEAD
         while(iterador.hasNext())
         {
             int llave = iterador.next();
@@ -515,6 +547,21 @@ public class SevenStud extends PokerPadre
                 }
         }
         // empezar con la index del pero
+=======
+        int repeticiones = -1;
+        while(iterador.hasNext())
+        {
+            repeticiones ++;
+            Jugador evaluar = jugadores.get(iterador.next());
+            int comparacion = menor.compareTo(evaluar.getCartaI(2));
+                if(comparacion == 0)
+                {
+                    menor = evaluar.getCartaI(2);
+                    indexPeor = repeticiones;
+                }
+        }
+        // colocar al inicio del arrayLits
+>>>>>>> origin/DeltaFiveCardDraw
         jugadorActual = indexPeor;
         actualizarPanelJuego();
         actualizarLabels();
@@ -565,6 +612,18 @@ public class SevenStud extends PokerPadre
         }
 
         jugadorActual = index;
+<<<<<<< HEAD
+=======
+        /*  usado para debug
+        for(int i = 0; i<numJugadores; i++)
+        {
+            System.out.println("Id"+jugadores.get(i).getJugadaId());
+            System.out.println("Puntos"+jugadores.get(i).getPuntaje());
+            
+        }
+        System.out.println("#############");
+        */
+>>>>>>> origin/DeltaFiveCardDraw
         actualizarPanelJuego();
         actualizarLabels();
     }
@@ -581,7 +640,10 @@ public class SevenStud extends PokerPadre
         int rotos = 0;
         primeraVez = 0;
         dineroBanca = 0;
+<<<<<<< HEAD
         todosEvaluados = 0;
+=======
+>>>>>>> origin/DeltaFiveCardDraw
         for(int i = 0; i<numJugadores; i++)
         {
             jugadores.get(i).vaciarMano();
