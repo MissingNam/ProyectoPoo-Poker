@@ -3,7 +3,6 @@ import java.awt.Font;
 import java.awt.Image;
 import java.util.ArrayList;
 import java.awt.event.ActionListener;
-import java.util.Iterator;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
