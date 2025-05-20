@@ -21,8 +21,6 @@ public class FiveCardDraw extends PokerPadre{
     private JLabel turnoJugador;
     private JLabel bote;
 
-    private ArrayList<Carta> descartes;
-
     private int jugadorActual;
     private int dineroDelBote;
     private int evaluarApuestas;
@@ -38,7 +36,6 @@ public class FiveCardDraw extends PokerPadre{
 
     public FiveCardDraw(int apuestaInicial, int numJugadores,int dineroInicial){
         super(apuestaInicial,numJugadores,dineroInicial);
-        descartes = new ArrayList<>();
         mazo.shuffle();
         reiniciarJuego();
     }
@@ -57,7 +54,6 @@ public class FiveCardDraw extends PokerPadre{
         mazo.vaciar();
         mazo.llenarMazo();
         mazo.shuffle();
-        descartes.clear();
         for(int i=0; i<numJugadores;i++){
             jugadores.get(i).vaciarMano();
             jugadores.get(i).setPuntaje(0);
@@ -245,9 +241,6 @@ public class FiveCardDraw extends PokerPadre{
         voltearCartas.setVisible(!primeraRonda);
         ventanaDeJuego.add(voltearCartas);
         voltearCartas.addActionListener(e->{
-            JOptionPane.showMessageDialog(null, 
-                "Al darle a descartar, las cartas boca arriba se descartaran", 
-                "Tip", JOptionPane.INFORMATION_MESSAGE); 
             for(int i = 0; i<jugadores.get(jugadorActual).getCartas().size();i++)
             {
                 Carta self = jugadores.get(jugadorActual).getCartaI(i);
@@ -300,7 +293,6 @@ public class FiveCardDraw extends PokerPadre{
             int cartasRemovidas=0;
             for(int i=0; i<cartasDelJugador.size();i++){
                 if(cartasDelJugador.get(i).esMirable()){
-                    descartes.add(cartasDelJugador.get(i));
                     jugadores.get(jugadorActual).getCartas().remove(cartasDelJugador.get(i));
                     cartasRemovidas++;
                 }
@@ -377,15 +369,6 @@ public class FiveCardDraw extends PokerPadre{
                 pasar.setVisible(true);
                 igualar.setVisible(true);
                 subir.setVisible(true);
-                for(int i = 0; i < numJugadores; i++)
-                {
-                    Jugador aEvaluar = jugadores.get(i);
-                    if(aEvaluar.getDinero() < apuesta)
-                    {
-                        aEvaluar.cambioRendido();
-                    }
-                }
-
 
                 pasarJugador();
             }else{
@@ -445,6 +428,9 @@ public class FiveCardDraw extends PokerPadre{
                         subir.setVisible(false);
                         rendirse.setVisible(true);
                         apuestaActual.setText("Apuesta actual:"+apuesta);
+                        JOptionPane.showMessageDialog(null, 
+                            "Al darle a descartar, las cartas boca arriba se descartaran", 
+                              "Tip", JOptionPane.INFORMATION_MESSAGE); 
                     }
                     if(segundaRondaApuesta){
                         showdown();
@@ -482,6 +468,7 @@ public class FiveCardDraw extends PokerPadre{
         if(jugadorGanador != 0){
             JOptionPane.showMessageDialog(null, "El jugador: "+(jugadorGanador+1)+" Es el ganador", 
                                     "Ganador", JOptionPane.ERROR_MESSAGE); 
+            jugadores.get(jugadorGanador).setDinero(apuesta+jugadores.get(jugadorGanador).getDinero());
             reiniciarJuego();
             return true;
         }
@@ -556,6 +543,7 @@ public class FiveCardDraw extends PokerPadre{
         actualizarCartas();
         JOptionPane.showMessageDialog(null, "El jugador: "+(jugadorActual+1)+" Es el ganador", 
                                     "Ganador", JOptionPane.ERROR_MESSAGE); 
+        jugadores.get(jugadorActual).setDinero(apuesta+jugadores.get(jugadorActual).getDinero());
         reiniciarJuego();
     }
 }
